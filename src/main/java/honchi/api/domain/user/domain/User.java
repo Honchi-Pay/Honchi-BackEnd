@@ -1,6 +1,6 @@
 package honchi.api.domain.user.domain;
 
-import honchi.api.domain.user.domain.enums.Gender;
+import honchi.api.domain.user.domain.enums.Sex;
 import lombok.*;
 
 import javax.persistence.*;
@@ -31,17 +31,17 @@ public class User {
     private String phone_number;
 
     @Enumerated(EnumType.STRING)
-    private Gender gender;
+    private Sex sex;
 
     private Integer star;
 
     @Builder
-    public User(String email, String password, String nick_name, String phone_number, Gender gender, Integer star) {
+    public User(String email, String password, String nick_name, String phone_number, Sex sex, Integer star) {
         this.email = email;
         this.password = password;
         this.nick_name = nick_name;
         this.phone_number = phone_number;
-        this.gender = gender;
+        this.sex = sex;
         this.star = star;
     }
 

@@ -1,5 +1,5 @@
 package honchi.api.domain.user.domain.enums;
 
-public enum Gender {
+public enum Sex {
     Male, Female
 }
