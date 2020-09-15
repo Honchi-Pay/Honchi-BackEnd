@@ -1,6 +1,6 @@
 package honchi.api.domain.user.dto;
 
-import honchi.api.domain.user.domain.enums.Gender;
+import honchi.api.domain.user.domain.enums.Sex;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -23,5 +23,5 @@ public class JoinRequest {
     @NotBlank
     private String phone_number;
 
-    private Gender gender;
+    private Sex gender;
 }

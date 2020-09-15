@@ -1,7 +1,7 @@
 package honchi.api.domain.user.service;
 
 import honchi.api.domain.user.domain.User;
-import honchi.api.domain.user.domain.enums.Gender;
+import honchi.api.domain.user.domain.enums.Sex;
 import honchi.api.domain.user.domain.repository.UserRepository;
 import honchi.api.domain.user.dto.JoinRequest;
 import honchi.api.domain.user.exception.UserAlreadyExistException;
@@ -19,16 +19,18 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void join(JoinRequest joinRequest) {
-        if(userRepository.findByEmail(joinRequest.getEmail()).isPresent()) throw new UserAlreadyExistException();
+        if (userRepository.findByEmail(joinRequest.getEmail()).isPresent()) throw new UserAlreadyExistException();
 
         String password = passwordEncoder.encode(joinRequest.getPassword());
 
-        userRepository.save(User.builder()
-                .email(joinRequest.getEmail())
-                .password(password)
-                .nick_name(joinRequest.getNick_name())
-                .phone_number(joinRequest.getPhone_number())
-                .gender(joinRequest.getGender().equals(Gender.Male) ? Gender.Male : Gender.Female)
-                .build());
+        userRepository.save(
+                User.builder()
+                        .email(joinRequest.getEmail())
+                        .password(password)
+                        .nick_name(joinRequest.getNick_name())
+                        .phone_number(joinRequest.getPhone_number())
+                        .gender(joinRequest.getGender().equals(Sex.Male) ? Sex.Male : Sex.Female)
+                        .build()
+        );
     }
 }
