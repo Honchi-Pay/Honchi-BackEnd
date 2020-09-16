@@ -4,12 +4,12 @@ import honchi.api.domain.user.domain.User;
 import honchi.api.domain.user.domain.repository.UserRepository;
 import honchi.api.domain.user.dto.SignUpRequest;
 import honchi.api.domain.user.exception.UserIsAlreadyExistException;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
