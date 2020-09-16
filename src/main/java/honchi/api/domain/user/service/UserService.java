@@ -1,8 +1,8 @@
 package honchi.api.domain.user.service;
 
-import honchi.api.domain.user.dto.JoinRequest;
+import honchi.api.domain.user.dto.SignUpRequest;
 
 public interface UserService {
 
-    void join(JoinRequest joinRequest);
+    void join(SignUpRequest signUpRequest);
 }
