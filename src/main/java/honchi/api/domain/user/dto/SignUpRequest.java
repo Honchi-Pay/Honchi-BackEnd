@@ -9,7 +9,7 @@ import javax.validation.constraints.NotBlank;
 
 @Getter
 @Setter
-public class JoinRequest {
+public class SignUpRequest {
 
     @Email
     private String email;
@@ -23,5 +23,5 @@ public class JoinRequest {
     @NotBlank
     private String phone_number;
 
-    private Sex gender;
+    private Sex sex;
 }

@@ -1,6 +1,6 @@
 package honchi.api.domain.user.controller;
 
-import honchi.api.domain.user.dto.JoinRequest;
+import honchi.api.domain.user.dto.SignUpRequest;
 import honchi.api.domain.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -17,8 +17,8 @@ public class UserController {
 
     private final UserService userService;
 
-    @PostMapping("/join")
-    public void join(@RequestBody @Valid JoinRequest joinRequest) {
-        userService.join(joinRequest);
+    @PostMapping("/")
+    public void join(@RequestBody @Valid SignUpRequest signUpRequest) {
+        userService.join(signUpRequest);
     }
 }
