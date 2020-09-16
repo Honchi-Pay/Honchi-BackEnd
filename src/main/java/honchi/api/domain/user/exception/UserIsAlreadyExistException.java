@@ -3,9 +3,9 @@ package honchi.api.domain.user.exception;
 import honchi.api.global.error.exception.BusinessException;
 import honchi.api.global.error.exception.ErrorCode;
 
-public class UserAlreadyExistException extends BusinessException {
+public class UserIsAlreadyExistException extends BusinessException {
 
-    public UserAlreadyExistException() {
+    public UserIsAlreadyExistException() {
         super(ErrorCode.USER_DUPLICATION);
     }
 }
