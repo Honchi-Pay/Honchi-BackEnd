@@ -13,6 +13,7 @@ public enum ErrorCode {
     BAD_REQUEST(400, "C400-0", "Bad Request(Invalid Parameter)"),
     USER_NOT_FOUND(404, "C404-0", "User Not Found."),
     INTERNAL_SERVER_ERROR(500, "C500-0", "Internal Server Error"),
+    PASSWORD_SAME(409, "C409-0", "Password Same Before"),
 
     //Auth
     INVALID_AUTH_CODE(400, "A400-1", "Invalid Auth Code"),
