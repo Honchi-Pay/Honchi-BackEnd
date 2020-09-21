@@ -1,11 +1,13 @@
 package honchi.api.domain.user.service;
 
+import honchi.api.domain.auth.exception.ExpiredTokenException;
 import honchi.api.domain.user.domain.User;
 import honchi.api.domain.user.domain.repository.UserRepository;
 import honchi.api.domain.user.dto.ChargePasswordRequest;
 import honchi.api.domain.user.dto.ProfileResponse;
 import honchi.api.domain.user.dto.SignUpRequest;
-import honchi.api.domain.user.exception.UserIsAlreadyExistException;
+import honchi.api.domain.user.exception.PasswordSameException;
+import honchi.api.domain.user.exception.UserAlreadyExistException;
 import honchi.api.global.config.security.AuthenticationFacade;
 import honchi.api.global.error.exception.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -24,7 +26,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void join(SignUpRequest signUpRequest) {
-        if (userRepository.findByEmail(signUpRequest.getEmail()).isPresent()) throw new UserIsAlreadyExistException();
+        if (userRepository.findByEmail(signUpRequest.getEmail()).isPresent()) throw new UserAlreadyExistException();
 
         String password = passwordEncoder.encode(signUpRequest.getPassword());
 
@@ -41,10 +43,18 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void chargePassword(ChargePasswordRequest chargePasswordRequest) {
-        User user = userRepository.findByEmail(authenticationFacade.getUserEmail())
+        String email = authenticationFacade.getUserEmail();
+
+        if(email.equals("anonymousUser")) throw new ExpiredTokenException();
+
+        User user = userRepository.findByEmail(email)
                 .orElseThrow(UserNotFoundException::new);
 
-        user.setPassword(chargePasswordRequest.getPassword());
+        if(passwordEncoder.matches(chargePasswordRequest.getPassword(), user.getPassword())) {
+            throw new PasswordSameException();
+        }
+
+        user.setPassword(passwordEncoder.encode(chargePasswordRequest.getPassword()));
 
         userRepository.save(user);
     }
