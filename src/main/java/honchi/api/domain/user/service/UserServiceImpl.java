@@ -2,9 +2,11 @@ package honchi.api.domain.user.service;
 
 import honchi.api.domain.user.domain.User;
 import honchi.api.domain.user.domain.repository.UserRepository;
+import honchi.api.domain.user.dto.ChargePasswordRequest;
 import honchi.api.domain.user.dto.ProfileResponse;
 import honchi.api.domain.user.dto.SignUpRequest;
 import honchi.api.domain.user.exception.UserIsAlreadyExistException;
+import honchi.api.global.config.security.AuthenticationFacade;
 import honchi.api.global.error.exception.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -17,6 +19,8 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
 
     private final PasswordEncoder passwordEncoder;
+
+    private final AuthenticationFacade authenticationFacade;
 
     @Override
     public void join(SignUpRequest signUpRequest) {
@@ -33,6 +37,16 @@ public class UserServiceImpl implements UserService {
                         .sex(signUpRequest.getSex())
                         .build()
         );
+    }
+
+    @Override
+    public void chargePassword(ChargePasswordRequest chargePasswordRequest) {
+        User user = userRepository.findByEmail(authenticationFacade.getUserEmail())
+                .orElseThrow(UserNotFoundException::new);
+
+        user.setPassword(chargePasswordRequest.getPassword());
+
+        userRepository.save(user);
     }
 
     @Override

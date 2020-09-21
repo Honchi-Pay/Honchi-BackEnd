@@ -1,5 +1,6 @@
 package honchi.api.domain.user.controller;
 
+import honchi.api.domain.user.dto.ChargePasswordRequest;
 import honchi.api.domain.user.dto.ProfileResponse;
 import honchi.api.domain.user.dto.SignUpRequest;
 import honchi.api.domain.user.service.UserService;
@@ -18,6 +19,11 @@ public class UserController {
     @PostMapping
     public void join(@RequestBody @Valid SignUpRequest signUpRequest) {
         userService.join(signUpRequest);
+    }
+
+    @PutMapping("/password")
+    public void chargePassword(@RequestBody @Valid ChargePasswordRequest chargePasswordRequest) {
+        userService.chargePassword(chargePasswordRequest);
     }
 
     @GetMapping("/{user_id}")
