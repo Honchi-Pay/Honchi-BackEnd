@@ -1,6 +1,7 @@
 package honchi.api.domain.user.service;
 
 import honchi.api.domain.auth.exception.ExpiredTokenException;
+import honchi.api.domain.user.domain.Star;
 import honchi.api.domain.user.domain.User;
 import honchi.api.domain.user.domain.repository.UserRepository;
 import honchi.api.domain.user.dto.ChargePasswordRequest;
@@ -88,6 +89,11 @@ public class UserServiceImpl implements UserService {
         } else {
             profile.setStar(profile.getStar() + starRequest.getStar());
         }
+
+        Star.builder()
+                .user_id(user.getId())
+                .starred_user_id(profile.getId())
+                .build();
 
         userRepository.save(profile);
     }
