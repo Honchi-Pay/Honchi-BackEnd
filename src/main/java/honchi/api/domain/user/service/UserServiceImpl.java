@@ -43,11 +43,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void chargePassword(ChargePasswordRequest chargePasswordRequest) {
-        String email = authenticationFacade.getUserEmail();
-
-        if (email.equals("anonymousUser")) throw new ExpiredTokenException();
-
-        User user = userRepository.findByEmail(email).orElseThrow(UserNotFoundException::new);
+        User user = userRepository.findByEmail(ExpiredToken(authenticationFacade.getUserEmail()))
+                .orElseThrow(UserNotFoundException::new);
 
         if (passwordEncoder.matches(chargePasswordRequest.getPassword(), user.getPassword())) {
             throw new PasswordSameException();
@@ -62,11 +59,20 @@ public class UserServiceImpl implements UserService {
     public ProfileResponse getProfile(Integer user_id) {
         User profile = userRepository.findById(user_id).orElseThrow(UserNotFoundException::new);
 
+        User user = userRepository.findByEmail(ExpiredToken(authenticationFacade.getUserEmail()))
+                .orElseThrow(UserNotFoundException::new);
+
         return ProfileResponse.builder()
                 .email(profile.getEmail())
                 .nick_name(profile.getNick_name())
                 .sex(profile.getSex())
                 .star(profile.getStar())
+                .mine(user.getId().equals(profile.getId()))
                 .build();
+    }
+
+    private String ExpiredToken(String email) {
+        if (email.equals("anonymousUser")) throw new ExpiredTokenException();
+        return email;
     }
 }
