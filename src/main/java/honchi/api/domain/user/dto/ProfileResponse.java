@@ -15,9 +15,9 @@ public class ProfileResponse {
 
     private Sex sex;
 
-    private Integer star;
+    private Double star;
 
-    private boolean mine;
+    private Boolean mine;
 
     private MultipartFile[] images;
 }
