@@ -3,6 +3,7 @@ package honchi.api.domain.user.controller;
 import honchi.api.domain.user.dto.ChargePasswordRequest;
 import honchi.api.domain.user.dto.ProfileResponse;
 import honchi.api.domain.user.dto.SignUpRequest;
+import honchi.api.domain.user.dto.StarRequest;
 import honchi.api.domain.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -29,5 +30,10 @@ public class UserController {
     @GetMapping("/{user_id}")
     public ProfileResponse getProfile(@PathVariable Integer user_id) {
         return userService.getProfile(user_id);
+    }
+
+    @PutMapping("/star/{user_id}")
+    public void star(@RequestBody @Valid StarRequest starRequest) {
+        userService.star(starRequest);
     }
 }
