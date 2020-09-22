@@ -17,5 +17,7 @@ public class ProfileResponse {
 
     private Integer star;
 
+    private boolean mine;
+
     private MultipartFile[] images;
 }
