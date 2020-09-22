@@ -45,12 +45,11 @@ public class UserServiceImpl implements UserService {
     public void chargePassword(ChargePasswordRequest chargePasswordRequest) {
         String email = authenticationFacade.getUserEmail();
 
-        if(email.equals("anonymousUser")) throw new ExpiredTokenException();
+        if (email.equals("anonymousUser")) throw new ExpiredTokenException();
 
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(UserNotFoundException::new);
+        User user = userRepository.findByEmail(email).orElseThrow(UserNotFoundException::new);
 
-        if(passwordEncoder.matches(chargePasswordRequest.getPassword(), user.getPassword())) {
+        if (passwordEncoder.matches(chargePasswordRequest.getPassword(), user.getPassword())) {
             throw new PasswordSameException();
         }
 
