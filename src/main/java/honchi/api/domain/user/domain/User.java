@@ -44,16 +44,4 @@ public class User {
         this.sex = sex;
         this.star = star;
     }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public void setNickName(String nick_name) {
-        this.nick_name = nick_name;
-    }
-
-    public void setStar(Integer star) {
-        this.star = star;
-    }
 }
