@@ -21,7 +21,8 @@ public enum ErrorCode {
     INVALID_TOKEN(401, "A401-0", "Invalid Token"),
     EXPIRED_TOKEN(401, "A401-1", "Expired Token"),
     UNAUTHORIZED(401, "A401-2", "Authentication is required and has failed or has not yet been provided."),
-    USER_DUPLICATION(409, "A409-0", "User is Already Exists");
+    USER_DUPLICATION(409, "A409-0", "User is Already Exists"),
+    USER_SAME(409, "A409-1", "User is Same");
 
     private final int status;
     private final String code;
