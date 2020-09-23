@@ -69,14 +69,18 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findByEmail(ExpiredToken(authenticationFacade.getUserEmail()))
                 .orElseThrow(UserNotFoundException::new);
 
-        Star star = starRepository.findByStarredUserId(profile.getId())
-                .orElseThrow(UserNotFoundException::new);
+        double star = 0.0;
+
+        if(starRepository.findByStarredUserId(profile.getId()).isPresent()) {
+            Star stars = starRepository.findByStarredUserId(profile.getId()).orElseThrow(UserNotFoundException::new);
+            star = (double) (Math.round(stars.getStar()*10)/10);
+        }
 
         return ProfileResponse.builder()
                 .email(profile.getEmail())
                 .nick_name(profile.getNick_name())
                 .sex(profile.getSex())
-                .star(star.getStar())
+                .star(star)
                 .mine(user.getId().equals(profile.getId()))
                 .build();
     }
@@ -89,8 +93,12 @@ public class UserServiceImpl implements UserService {
         User profile = userRepository.findById(starRequest.getUser_id())
                 .orElseThrow(UserNotFoundException::new);
 
-        Star stars = starRepository.findByStarredUserId(profile.getId())
-                .orElseThrow(UserAlreadyExistException::new);
+        Star star = new Star();
+
+        if(starRepository.findByStarredUserId(profile.getId()).isPresent()) {
+            star = starRepository.findByStarredUserId(profile.getId())
+                    .orElseThrow(UserNotFoundException::new);
+        }
 
         if(user.getId().equals(profile.getId())) throw new UserSameException();
 
@@ -98,20 +106,13 @@ public class UserServiceImpl implements UserService {
                 starRequest.getStar() > 5 || starRequest.getStar() < 1)
             throw new BadRequestException();
 
-        if(stars.getStar() == null) {
-            stars.setStar(starRequest.getStar());
-        } else {
-            if(starRepository.findByStarredUserId(starRequest.getUser_id()).isPresent())
-                stars.setStar(starRequest.getStar());
-            else
-                stars.setStar(stars.getStar() + starRequest.getStar());
-        }
+        star.setStar(starRequest.getStar());
 
         starRepository.save(
                 Star.builder()
                 .userId(user.getId())
                 .starredUserId(profile.getId())
-                .star(stars.getStar())
+                .star(star.getStar())
                 .build());
     }
 
