@@ -33,15 +33,12 @@ public class User {
     @Enumerated(EnumType.STRING)
     private Sex sex;
 
-    private Double star;
-
     @Builder
-    public User(String email, String password, String nick_name, String phone_number, Sex sex, Double star) {
+    public User(String email, String password, String nick_name, String phone_number, Sex sex) {
         this.email = email;
         this.password = password;
         this.nick_name = nick_name;
         this.phone_number = phone_number;
         this.sex = sex;
-        this.star = star;
     }
 }

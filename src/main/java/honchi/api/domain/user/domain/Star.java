@@ -2,9 +2,8 @@ package honchi.api.domain.user.domain;
 
 import lombok.*;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
+import java.io.Serializable;
 
 @Getter
 @Setter
@@ -13,11 +12,16 @@ import javax.persistence.Table;
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
-public class Star {
+@IdClass(StarPK.class)
+public class Star implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     @Id
-    private Integer user_id;
+    private Integer userId;
 
     @Id
-    private Integer starred_user_id;
+    private Integer starredUserId;
+
+    private Double star;
 }

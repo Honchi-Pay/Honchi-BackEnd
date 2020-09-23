@@ -13,6 +13,7 @@ import honchi.api.domain.user.exception.PasswordSameException;
 import honchi.api.domain.user.exception.UserAlreadyExistException;
 import honchi.api.domain.user.exception.UserSameException;
 import honchi.api.global.config.security.AuthenticationFacade;
+import honchi.api.global.error.exception.BadRequestException;
 import honchi.api.global.error.exception.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -68,11 +69,14 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findByEmail(ExpiredToken(authenticationFacade.getUserEmail()))
                 .orElseThrow(UserNotFoundException::new);
 
+        Star star = starRepository.findByStarredUserId(profile.getId())
+                .orElseThrow(UserNotFoundException::new);
+
         return ProfileResponse.builder()
                 .email(profile.getEmail())
                 .nick_name(profile.getNick_name())
                 .sex(profile.getSex())
-                .star(profile.getStar())
+                .star(star.getStar())
                 .mine(user.getId().equals(profile.getId()))
                 .build();
     }
@@ -85,19 +89,29 @@ public class UserServiceImpl implements UserService {
         User profile = userRepository.findById(starRequest.getUser_id())
                 .orElseThrow(UserNotFoundException::new);
 
+        Star stars = starRepository.findByStarredUserId(profile.getId())
+                .orElseThrow(UserAlreadyExistException::new);
+
         if(user.getId().equals(profile.getId())) throw new UserSameException();
 
-        if(profile.getStar() == null) {
-            profile.setStar(starRequest.getStar());
+        if(starRequest.getUser_id() == null || starRequest.getStar() == null ||
+                starRequest.getStar() > 5 || starRequest.getStar() < 1)
+            throw new BadRequestException();
+
+        if(stars.getStar() == null) {
+            stars.setStar(starRequest.getStar());
         } else {
-            profile.setStar(profile.getStar() + starRequest.getStar());
+            if(starRepository.findByStarredUserId(starRequest.getUser_id()).isPresent())
+                stars.setStar(starRequest.getStar());
+            else
+                stars.setStar(stars.getStar() + starRequest.getStar());
         }
 
-        userRepository.save(profile);
         starRepository.save(
                 Star.builder()
-                .user_id(user.getId())
-                .starred_user_id(profile.getId())
+                .userId(user.getId())
+                .starredUserId(profile.getId())
+                .star(stars.getStar())
                 .build());
     }
 

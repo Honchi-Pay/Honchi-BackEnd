@@ -32,7 +32,7 @@ public class UserController {
         return userService.getProfile(user_id);
     }
 
-    @PutMapping("/star/{user_id}")
+    @PutMapping("/star")
     public void star(@RequestBody @Valid StarRequest starRequest) {
         userService.star(starRequest);
     }
