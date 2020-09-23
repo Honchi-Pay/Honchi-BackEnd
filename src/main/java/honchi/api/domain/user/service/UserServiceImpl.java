@@ -3,6 +3,7 @@ package honchi.api.domain.user.service;
 import honchi.api.domain.auth.exception.ExpiredTokenException;
 import honchi.api.domain.user.domain.Star;
 import honchi.api.domain.user.domain.User;
+import honchi.api.domain.user.domain.repository.StarRepository;
 import honchi.api.domain.user.domain.repository.UserRepository;
 import honchi.api.domain.user.dto.ChargePasswordRequest;
 import honchi.api.domain.user.dto.ProfileResponse;
@@ -22,6 +23,8 @@ import org.springframework.stereotype.Service;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
+
+    private final StarRepository starRepository;
 
     private final PasswordEncoder passwordEncoder;
 
@@ -90,12 +93,12 @@ public class UserServiceImpl implements UserService {
             profile.setStar(profile.getStar() + starRequest.getStar());
         }
 
-        Star.builder()
+        userRepository.save(profile);
+        starRepository.save(
+                Star.builder()
                 .user_id(user.getId())
                 .starred_user_id(profile.getId())
-                .build();
-
-        userRepository.save(profile);
+                .build());
     }
 
     private String ExpiredToken(String email) {
