@@ -93,19 +93,19 @@ public class UserServiceImpl implements UserService {
         User profile = userRepository.findById(starRequest.getUser_id())
                 .orElseThrow(UserNotFoundException::new);
 
-        Star star = new Star();
-
-        if(starRepository.findByStarredUserId(profile.getId()).isPresent()) {
-            star = starRepository.findByStarredUserId(profile.getId())
-                    .orElseThrow(UserNotFoundException::new);
-        }
-
         if(user.getId().equals(profile.getId())) throw new UserSameException();
 
         if(starRequest.getUser_id() == null || starRequest.getStar() == null ||
                 starRequest.getStar() > 5 || starRequest.getStar() < 1)
             throw new BadRequestException();
 
+        Star star = new Star();
+
+        if(starRepository.findByStarredUserId(profile.getId()).isPresent()) {
+            star = starRepository.findByStarredUserId(profile.getId())
+                    .orElseThrow(UserNotFoundException::new);
+        }
+        
         star.setStar(starRequest.getStar());
 
         starRepository.save(
