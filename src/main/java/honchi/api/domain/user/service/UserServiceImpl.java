@@ -33,7 +33,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void join(SignUpRequest signUpRequest) {
-        if (userRepository.findByEmail(signUpRequest.getEmail()).isPresent()) throw new UserAlreadyExistException();
+        if (userRepository.findByEmail(signUpRequest.getEmail()).isPresent())
+            throw new UserAlreadyExistException();
 
         String password = passwordEncoder.encode(signUpRequest.getPassword());
 
@@ -53,9 +54,8 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findByEmail(ExpiredToken(authenticationFacade.getUserEmail()))
                 .orElseThrow(UserNotFoundException::new);
 
-        if (passwordEncoder.matches(chargePasswordRequest.getPassword(), user.getPassword())) {
+        if (passwordEncoder.matches(chargePasswordRequest.getPassword(), user.getPassword()))
             throw new PasswordSameException();
-        }
 
         user.setPassword(passwordEncoder.encode(chargePasswordRequest.getPassword()));
 
@@ -72,8 +72,8 @@ public class UserServiceImpl implements UserService {
         double star = 0.0;
 
         if(starRepository.findByStarredUserId(profile.getId()).isPresent()) {
-            Star stars = starRepository.findByStarredUserId(profile.getId()).orElseThrow(UserNotFoundException::new);
-            star = (double) (Math.round(stars.getStar()*10)/10);
+            star = (double) (Math.round((starRepository.sumStar(user_id)/
+                    starRepository.countByStarredUserId(user_id)) *10)/10);
         }
 
         return ProfileResponse.builder()
