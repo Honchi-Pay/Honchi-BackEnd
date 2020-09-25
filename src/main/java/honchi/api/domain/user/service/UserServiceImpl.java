@@ -5,10 +5,7 @@ import honchi.api.domain.user.domain.Star;
 import honchi.api.domain.user.domain.User;
 import honchi.api.domain.user.domain.repository.StarRepository;
 import honchi.api.domain.user.domain.repository.UserRepository;
-import honchi.api.domain.user.dto.ChargePasswordRequest;
-import honchi.api.domain.user.dto.ProfileResponse;
-import honchi.api.domain.user.dto.SignUpRequest;
-import honchi.api.domain.user.dto.StarRequest;
+import honchi.api.domain.user.dto.*;
 import honchi.api.domain.user.exception.PasswordSameException;
 import honchi.api.domain.user.exception.UserAlreadyExistException;
 import honchi.api.domain.user.exception.UserSameException;
@@ -42,8 +39,8 @@ public class UserServiceImpl implements UserService {
                 User.builder()
                         .email(signUpRequest.getEmail())
                         .password(password)
-                        .nick_name(signUpRequest.getNick_name())
-                        .phone_number(signUpRequest.getPhone_number())
+                        .nickName(signUpRequest.getNick_name())
+                        .phoneNumber(signUpRequest.getPhone_number())
                         .sex(signUpRequest.getSex())
                         .build()
         );
@@ -78,11 +75,16 @@ public class UserServiceImpl implements UserService {
 
         return ProfileResponse.builder()
                 .email(profile.getEmail())
-                .nick_name(profile.getNick_name())
+                .nick_name(profile.getNickName())
                 .sex(profile.getSex())
                 .star(star)
                 .mine(user.getId().equals(profile.getId()))
                 .build();
+    }
+
+    @Override
+    public void updateProfile(ProfileUpdateRequest profileUpdateRequest) {
+
     }
 
     @Override
@@ -105,13 +107,13 @@ public class UserServiceImpl implements UserService {
             star = starRepository.findByStarredUserId(profile.getId())
                     .orElseThrow(UserNotFoundException::new);
         }
-        
+
         star.setStar(starRequest.getStar());
 
         starRepository.save(
                 Star.builder()
                 .userId(user.getId())
-                .starredUserId(profile.getId())
+                .targetId(profile.getId())
                 .star(star.getStar())
                 .build());
     }

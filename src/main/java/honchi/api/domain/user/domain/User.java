@@ -4,6 +4,8 @@ import honchi.api.domain.user.domain.enums.Sex;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Setter
@@ -25,20 +27,23 @@ public class User {
     private String password;
 
     @Column(nullable = false, length = 8)
-    private String nick_name;
+    private String nickName;
 
     @Column(nullable = false)
-    private String phone_number;
+    private String phoneNumber;
 
     @Enumerated(EnumType.STRING)
     private Sex sex;
 
+    @OneToMany(cascade = CascadeType.ALL)
+    private List<UserImage> images;
+
     @Builder
-    public User(String email, String password, String nick_name, String phone_number, Sex sex) {
+    public User(String email, String password, String nickName, String phoneNumber, Sex sex) {
         this.email = email;
         this.password = password;
-        this.nick_name = nick_name;
-        this.phone_number = phone_number;
+        this.nickName = nickName;
+        this.phoneNumber = phoneNumber;
         this.sex = sex;
     }
 }

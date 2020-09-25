@@ -21,7 +21,7 @@ public class Star implements Serializable {
     private Integer userId;
 
     @Id
-    private Integer starredUserId;
+    private Integer targetId;
 
     private Double star;
 }

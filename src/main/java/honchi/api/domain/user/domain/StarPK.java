@@ -9,7 +9,7 @@ public class StarPK implements Serializable {
 
     private Integer userId;
 
-    private Integer starredUserId;
+    private Integer targetId;
 
     public Integer getUserId() {
         return userId;
@@ -19,12 +19,12 @@ public class StarPK implements Serializable {
         this.userId = userId;
     }
 
-    public Integer getStarredUserId() {
-        return starredUserId;
+    public Integer getTargetId() {
+        return targetId;
     }
 
-    public void setStarredUserId(Integer starredUserId) {
-        this.starredUserId = starredUserId;
+    public void setTargetId(Integer targetId) {
+        this.targetId = targetId;
     }
 
     @Override
@@ -33,11 +33,11 @@ public class StarPK implements Serializable {
         if (o == null || getClass() != o.getClass()) return false;
         StarPK starPK = (StarPK) o;
         return Objects.equals(userId, starPK.userId) &&
-                Objects.equals(starredUserId, starPK.starredUserId);
+                Objects.equals(targetId, starPK.targetId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(userId, starredUserId);
+        return Objects.hash(userId, targetId);
     }
 }
