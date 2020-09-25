@@ -11,7 +11,7 @@ public class ProfileResponse {
 
     private String email;
 
-    private String nick_name;
+    private String nickName;
 
     private Sex sex;
 

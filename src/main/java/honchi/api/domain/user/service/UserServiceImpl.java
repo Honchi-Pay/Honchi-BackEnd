@@ -39,7 +39,7 @@ public class UserServiceImpl implements UserService {
                 User.builder()
                         .email(signUpRequest.getEmail())
                         .password(password)
-                        .nickName(signUpRequest.getNick_name())
+                        .nickName(signUpRequest.getNickName())
                         .phoneNumber(signUpRequest.getPhone_number())
                         .sex(signUpRequest.getSex())
                         .build()
@@ -75,7 +75,7 @@ public class UserServiceImpl implements UserService {
 
         return ProfileResponse.builder()
                 .email(profile.getEmail())
-                .nick_name(profile.getNickName())
+                .nickName(profile.getNickName())
                 .sex(profile.getSex())
                 .star(star)
                 .mine(user.getId().equals(profile.getId()))
@@ -92,12 +92,12 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findByEmail(ExpiredToken(authenticationFacade.getUserEmail()))
                 .orElseThrow(UserNotFoundException::new);
 
-        User profile = userRepository.findById(starRequest.getUser_id())
+        User profile = userRepository.findById(starRequest.getTargetId())
                 .orElseThrow(UserNotFoundException::new);
 
         if(user.getId().equals(profile.getId())) throw new UserSameException();
 
-        if(starRequest.getUser_id() == null || starRequest.getStar() == null ||
+        if(starRequest.getTargetId() == null || starRequest.getStar() == null ||
                 starRequest.getStar() > 5 || starRequest.getStar() < 1)
             throw new BadRequestException();
 
