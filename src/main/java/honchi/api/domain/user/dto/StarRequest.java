@@ -7,7 +7,7 @@ import lombok.Setter;
 @Setter
 public class StarRequest {
 
-    private Integer user_id;
+    private Integer targetId;
 
     private Double star;
 }
