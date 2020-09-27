@@ -10,9 +10,9 @@ import java.util.Optional;
 
 @Repository
 public interface StarRepository extends JpaRepository<Star, Integer> {
-    Optional<Star> findByStarredUserId (Integer starred_user_id);
-    Integer countByStarredUserId (Integer starred_user_id);
+    Optional<Star> findByTargetId (Integer targetId);
+    Integer countByTargetId (Integer targetId);
 
-    @Query("select sum(star) from Star where starredUserId = :starred_user_id")
-    Double sumStar (@Param("starred_user_id") Integer starred_user_id);
+    @Query("select sum(star) from Star where targetId = :targetId")
+    Double sumStar (@Param("targetId") Integer targetId);
 }
