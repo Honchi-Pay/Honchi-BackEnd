@@ -19,5 +19,5 @@ public class ProfileResponse {
 
     private Boolean mine;
 
-    private MultipartFile[] images;
+    private MultipartFile images;
 }

@@ -21,7 +21,7 @@ public class SignUpRequest {
     private String nickName;
 
     @NotBlank
-    private String phone_number;
+    private String phoneNumber;
 
     private Sex sex;
 }
