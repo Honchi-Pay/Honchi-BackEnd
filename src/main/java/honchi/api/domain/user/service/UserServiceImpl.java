@@ -3,6 +3,8 @@ package honchi.api.domain.user.service;
 import honchi.api.domain.auth.exception.ExpiredTokenException;
 import honchi.api.domain.user.domain.Star;
 import honchi.api.domain.user.domain.User;
+import honchi.api.domain.user.domain.UserImage;
+import honchi.api.domain.user.domain.repository.ImageRepository;
 import honchi.api.domain.user.domain.repository.StarRepository;
 import honchi.api.domain.user.domain.repository.UserRepository;
 import honchi.api.domain.user.dto.*;
@@ -13,20 +15,30 @@ import honchi.api.global.config.security.AuthenticationFacade;
 import honchi.api.global.error.exception.BadRequestException;
 import honchi.api.global.error.exception.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.File;
+import java.util.Arrays;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
-
     private final StarRepository starRepository;
+    private final ImageRepository imageRepository;
 
     private final PasswordEncoder passwordEncoder;
 
     private final AuthenticationFacade authenticationFacade;
+
+    @Value("${image.upload.dir}")
+    private String imageDirPath;
 
     @Override
     public void join(SignUpRequest signUpRequest) {
@@ -40,7 +52,7 @@ public class UserServiceImpl implements UserService {
                         .email(signUpRequest.getEmail())
                         .password(password)
                         .nickName(signUpRequest.getNickName())
-                        .phoneNumber(signUpRequest.getPhone_number())
+                        .phoneNumber(signUpRequest.getPhoneNumber())
                         .sex(signUpRequest.getSex())
                         .build()
         );
@@ -68,9 +80,9 @@ public class UserServiceImpl implements UserService {
 
         double star = 0.0;
 
-        if(starRepository.findByStarredUserId(profile.getId()).isPresent()) {
+        if(starRepository.findByTargetId(profile.getId()).isPresent()) {
             star = (double) (Math.round((starRepository.sumStar(user_id)/
-                    starRepository.countByStarredUserId(user_id)) *10)/10);
+                    starRepository.countByTargetId(user_id)) *10)/10);
         }
 
         return ProfileResponse.builder()
@@ -82,8 +94,29 @@ public class UserServiceImpl implements UserService {
                 .build();
     }
 
+    @SneakyThrows
     @Override
     public void updateProfile(ProfileUpdateRequest profileUpdateRequest) {
+        User user = userRepository.findByEmail(ExpiredToken(authenticationFacade.getUserEmail()))
+                .orElseThrow(UserNotFoundException::new);
+
+        if(profileUpdateRequest.getProfileImage() != null) {
+            String imageName = UUID.randomUUID().toString();
+            imageRepository.save(
+                    UserImage.builder()
+                            .imageName(imageName)
+                            .build()
+            );
+            profileUpdateRequest.getProfileImage().transferTo(new File(imageDirPath, imageName));
+
+            UserImage image = imageRepository.findByImageName(imageName);
+
+            user.setImages(image);
+        }
+
+        user.setNickName(profileUpdateRequest.getNickName());
+
+        userRepository.save(user);
 
     }
 
@@ -103,8 +136,8 @@ public class UserServiceImpl implements UserService {
 
         Star star = new Star();
 
-        if(starRepository.findByStarredUserId(profile.getId()).isPresent()) {
-            star = starRepository.findByStarredUserId(profile.getId())
+        if(starRepository.findByTargetId(profile.getId()).isPresent()) {
+            star = starRepository.findByTargetId(profile.getId())
                     .orElseThrow(UserNotFoundException::new);
         }
 

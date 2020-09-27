@@ -35,8 +35,9 @@ public class User {
     @Enumerated(EnumType.STRING)
     private Sex sex;
 
-    @OneToMany(cascade = CascadeType.ALL)
-    private List<UserImage> images;
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "user_id")
+    private UserImage images;
 
     @Builder
     public User(String email, String password, String nickName, String phoneNumber, Sex sex) {
