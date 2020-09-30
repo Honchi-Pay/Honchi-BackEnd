@@ -19,10 +19,8 @@ import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
-import java.util.Arrays;
 import java.util.UUID;
 
 @Service
@@ -101,17 +99,33 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(UserNotFoundException::new);
 
         if(profileUpdateRequest.getProfileImage() != null) {
+            if(user.getImages() != null) {
+                UserImage image = imageRepository.findByUserId(user.getId());
+
+                new File(imageDirPath, image.getImageName()).delete();
+            }
+
             String imageName = UUID.randomUUID().toString();
-            imageRepository.save(
-                    UserImage.builder()
-                            .imageName(imageName)
-                            .build()
-            );
+
+            if(user.getImages() != null) {
+                UserImage image = imageRepository.findByUserId(user.getId());
+
+                image.setImageName(imageName);
+
+                imageRepository.save(image);
+            } else {
+                imageRepository.save(
+                        UserImage.builder()
+                                .imageName(imageName)
+                                .userId(user.getId())
+                                .build()
+                );
+            }
             profileUpdateRequest.getProfileImage().transferTo(new File(imageDirPath, imageName));
 
-            UserImage image = imageRepository.findByImageName(imageName);
+            UserImage images = imageRepository.findByImageName(imageName);
 
-            user.setImages(image);
+            user.setImages(images);
         }
 
         user.setNickName(profileUpdateRequest.getNickName());

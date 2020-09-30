@@ -4,8 +4,6 @@ import honchi.api.domain.user.domain.enums.Sex;
 import lombok.*;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
 
 @Getter
 @Setter
@@ -36,7 +34,6 @@ public class User {
     private Sex sex;
 
     @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "user_id")
     private UserImage images;
 
     @Builder

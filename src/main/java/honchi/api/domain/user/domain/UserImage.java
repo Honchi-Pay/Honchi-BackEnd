@@ -12,10 +12,11 @@ import javax.persistence.*;
 public class UserImage {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer Id;
-
     private Integer userId;
 
     private String imageName;
+
+    public void setImageName(String imageName) {
+        this.imageName = imageName;
+    }
 }
