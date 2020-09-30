@@ -99,16 +99,12 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(UserNotFoundException::new);
 
         if(profileUpdateRequest.getProfileImage() != null) {
-            if(user.getImages() != null) {
-                UserImage image = imageRepository.findByUserId(user.getId());
-
-                new File(imageDirPath, image.getImageName()).delete();
-            }
-
             String imageName = UUID.randomUUID().toString();
 
             if(user.getImages() != null) {
                 UserImage image = imageRepository.findByUserId(user.getId());
+
+                new File(imageDirPath, image.getImageName()).delete();
 
                 image.setImageName(imageName);
 
