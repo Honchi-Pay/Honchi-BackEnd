@@ -34,7 +34,7 @@ public class User {
     private Sex sex;
 
     @OneToOne(cascade = CascadeType.ALL)
-    private UserImage images;
+    private UserImage image;
 
     @Builder
     public User(String email, String password, String nickName, String phoneNumber, Sex sex) {

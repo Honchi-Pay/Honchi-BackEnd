@@ -101,14 +101,14 @@ public class UserServiceImpl implements UserService {
         if(profileUpdateRequest.getProfileImage() != null) {
             String imageName = UUID.randomUUID().toString();
 
-            if(user.getImages() != null) {
-                UserImage image = imageRepository.findByUserId(user.getId());
+            if(user.getImage() != null) {
+                UserImage profile = imageRepository.findByUserId(user.getId());
 
-                new File(imageDirPath, image.getImageName()).delete();
+                new File(imageDirPath, profile.getImageName()).delete();
 
-                image.setImageName(imageName);
+                profile.setImageName(imageName);
 
-                imageRepository.save(image);
+                imageRepository.save(profile);
             } else {
                 imageRepository.save(
                         UserImage.builder()
@@ -119,9 +119,9 @@ public class UserServiceImpl implements UserService {
             }
             profileUpdateRequest.getProfileImage().transferTo(new File(imageDirPath, imageName));
 
-            UserImage images = imageRepository.findByImageName(imageName);
+            UserImage image = imageRepository.findByImageName(imageName);
 
-            user.setImages(images);
+            user.setImage(image);
         }
 
         user.setNickName(profileUpdateRequest.getNickName());
