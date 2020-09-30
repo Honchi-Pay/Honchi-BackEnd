@@ -29,7 +29,7 @@ public class UserController {
         return userService.getProfile(user_id);
     }
 
-    @PutMapping("/")
+    @PutMapping
     public void updateProfile(@ModelAttribute @Valid ProfileUpdateRequest profileUpdateRequest) {
         userService.updateProfile(profileUpdateRequest);
     }
