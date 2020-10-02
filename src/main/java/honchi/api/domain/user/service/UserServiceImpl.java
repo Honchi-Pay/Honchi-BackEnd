@@ -76,6 +76,8 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findByEmail(ExpiredToken(authenticationFacade.getUserEmail()))
                 .orElseThrow(UserNotFoundException::new);
 
+        UserImage image = imageRepository.findByUserId(profile.getId());
+
         double star = 0.0;
 
         if(starRepository.findByTargetId(profile.getId()).isPresent()) {
@@ -88,6 +90,7 @@ public class UserServiceImpl implements UserService {
                 .nickName(profile.getNickName())
                 .sex(profile.getSex())
                 .star(star)
+                .image(image.getImageName())
                 .mine(user.getId().equals(profile.getId()))
                 .build();
     }
@@ -112,8 +115,8 @@ public class UserServiceImpl implements UserService {
             } else {
                 imageRepository.save(
                         UserImage.builder()
-                                .imageName(imageName)
                                 .userId(user.getId())
+                                .imageName(imageName)
                                 .build()
                 );
             }
