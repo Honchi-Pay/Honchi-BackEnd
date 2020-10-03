@@ -103,6 +103,16 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public void findPassword(FindPasswordRequest findPasswordRequest) {
+        User user = userRepository.findByEmail(findPasswordRequest.getEmail())
+                .orElseThrow(UserNotFoundException::new);
+
+        user.setPassword(findPasswordRequest.getEmail());
+
+        userRepository.save(user);
+    }
+
+    @Override
     public void chargePassword(ChargePasswordRequest chargePasswordRequest) {
         User user = userRepository.findByEmail(ExpiredToken(authenticationFacade.getUserEmail()))
                 .orElseThrow(UserNotFoundException::new);
