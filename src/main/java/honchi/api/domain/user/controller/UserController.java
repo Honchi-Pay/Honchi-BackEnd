@@ -30,6 +30,11 @@ public class UserController {
         userService.verifyEmail(verifyCodeRequest);
     }
 
+    @PostMapping("/password")
+    public void findPassword(@RequestBody @Valid FindPasswordRequest findPasswordRequest) {
+        userService.findPassword(findPasswordRequest);
+    }
+
     @PutMapping("/password")
     public void chargePassword(@RequestBody @Valid ChargePasswordRequest chargePasswordRequest) {
         userService.chargePassword(chargePasswordRequest);
