@@ -8,4 +8,6 @@ import lombok.Setter;
 public class FindPasswordRequest {
 
     private String email;
+
+    private String password;
 }
