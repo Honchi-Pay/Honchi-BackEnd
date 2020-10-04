@@ -44,15 +44,26 @@ public class UserServiceImpl implements UserService {
     private String imageDirPath;
 
     @Override
-    public void join(SignUpRequest signUpRequest) {
-        if (userRepository.findByEmail(signUpRequest.getEmail()).isPresent())
+    public void alone(String email) {
+        userRepository.findByEmail(email).ifPresent(user -> {
             throw new UserAlreadyExistException();
+        });
 
+        sendEmail(email);
+    }
+
+    @Override
+    public void join(SignUpRequest signUpRequest) {
+        String email = signUpRequest.getEmail();
         String password = passwordEncoder.encode(signUpRequest.getPassword());
+
+        verificationRepository.findById(email)
+                .filter(EmailVerification::isVerified)
+                .orElseThrow(InvalidAuthEmailException::new);
 
         userRepository.save(
                 User.builder()
-                        .email(signUpRequest.getEmail())
+                        .email(email)
                         .password(password)
                         .nickName(signUpRequest.getNickName())
                         .phoneNumber(signUpRequest.getPhoneNumber())
@@ -63,25 +74,17 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void sendEmail(String email) {
-        EmailVerification emailVerification = verificationRepository.findByEmail(email).orElse(null);
-
         String code = randomCode();
 
         emailService.sendEmail(email, code);
 
-        if(emailVerification != null) {
-            emailVerification.setCode(code);
-
-            verificationRepository.save(emailVerification);
-        } else {
-            verificationRepository.save(
-                    EmailVerification.builder()
-                            .email(email)
-                            .code(code)
-                            .status(EmailVerificationStatus.UNVERIFIED)
-                            .build()
-            );
-        }
+        verificationRepository.save(
+                EmailVerification.builder()
+                        .email(email)
+                        .code(code)
+                        .status(EmailVerificationStatus.UNVERIFIED)
+                        .build()
+        );
     }
 
     @Override
@@ -89,65 +92,65 @@ public class UserServiceImpl implements UserService {
         String email = verifyCodeRequest.getEmail();
         String code = verifyCodeRequest.getCode();
 
-        EmailVerification emailVerification = verificationRepository.findByEmail(email)
+        EmailVerification emailVerification = verificationRepository.findById(email)
                 .orElseThrow(InvalidAuthEmailException::new);
 
         if(!emailVerification.getCode().equals(code))
             throw new InvalidAuthCodeException();
 
-        if(emailVerification.getStatus().equals(EmailVerificationStatus.UNVERIFIED)) {
-            emailVerification.setStatus(EmailVerificationStatus.VERIFIED);
-
-            verificationRepository.save(emailVerification);
-        }
+        verificationRepository.save(emailVerification.verify());
     }
 
     @Override
     public void findPassword(FindPasswordRequest findPasswordRequest) {
-        User user = userRepository.findByEmail(findPasswordRequest.getEmail())
+        String email = findPasswordRequest.getEmail();
+        String password = passwordEncoder.encode(findPasswordRequest.getPassword());
+
+        User user = userRepository.findByEmail(email)
                 .orElseThrow(UserNotFoundException::new);
 
-        user.setPassword(findPasswordRequest.getEmail());
+        user.setPassword(password);
 
         userRepository.save(user);
     }
 
     @Override
-    public void chargePassword(ChargePasswordRequest chargePasswordRequest) {
+    public void changePassword(ChangePasswordRequest changePasswordRequest) {
         User user = userRepository.findByEmail(ExpiredToken(authenticationFacade.getUserEmail()))
                 .orElseThrow(UserNotFoundException::new);
 
-        if (passwordEncoder.matches(chargePasswordRequest.getPassword(), user.getPassword()))
+        if (passwordEncoder.matches(changePasswordRequest.getPassword(), user.getPassword()))
             throw new PasswordSameException();
 
-        user.setPassword(passwordEncoder.encode(chargePasswordRequest.getPassword()));
+        user.setPassword(passwordEncoder.encode(changePasswordRequest.getPassword()));
 
         userRepository.save(user);
     }
 
     @Override
-    public ProfileResponse getProfile(Integer user_id) {
-        User profile = userRepository.findById(user_id).orElseThrow(UserNotFoundException::new);
+    public ProfileResponse getProfile(String nickName) {
+        User profile = userRepository.findByNickName(nickName).orElseThrow(UserNotFoundException::new);
 
         User user = userRepository.findByEmail(ExpiredToken(authenticationFacade.getUserEmail()))
                 .orElseThrow(UserNotFoundException::new);
 
         UserImage image = imageRepository.findByUserId(profile.getId());
 
+        Integer userId = profile.getId();
         double star = 0.0;
 
         if(starRepository.findByTargetId(profile.getId()).isPresent()) {
-            star = (double) (Math.round((starRepository.sumStar(user_id)/
-                    starRepository.countByTargetId(user_id)) *10)/10);
+            star = (double) (Math.round((starRepository.sumStar(userId)/
+                    starRepository.countByTargetId(userId))*10)/10);
         }
 
         return ProfileResponse.builder()
                 .email(profile.getEmail())
-                .nickName(profile.getNickName())
+                .nickName(nickName)
                 .sex(profile.getSex())
                 .star(star)
                 .image(image.getImageName())
-                .mine(user.getId().equals(profile.getId()))
+                .mine(user.getId().equals(userId))
                 .build();
     }
 
@@ -231,11 +234,11 @@ public class UserServiceImpl implements UserService {
                 "Y", "Z", "1", "2", "3", "4", "5", "6", "7", "8", "9", "0"};
 
         Random random = new Random(System.currentTimeMillis());
-        int tablelength = codes.length;
+        int tableLength = codes.length;
         StringBuffer buf = new StringBuffer();
 
         for (int i = 0; i < 6; i++) {
-            buf.append(codes[random.nextInt(tablelength)]);
+            buf.append(codes[random.nextInt(tableLength)]);
         }
 
         return buf.toString();
