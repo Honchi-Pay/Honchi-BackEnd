@@ -1,4 +1,4 @@
-package honchi.api.global.image.service;
+package honchi.api.domain.image.service;
 
 import com.amazonaws.util.IOUtils;
 import lombok.RequiredArgsConstructor;

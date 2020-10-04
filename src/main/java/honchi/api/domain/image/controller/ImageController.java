@@ -1,6 +1,6 @@
-package honchi.api.global.image.controller;
+package honchi.api.domain.image.controller;
 
-import honchi.api.global.image.service.ImageService;
+import honchi.api.domain.image.service.ImageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
