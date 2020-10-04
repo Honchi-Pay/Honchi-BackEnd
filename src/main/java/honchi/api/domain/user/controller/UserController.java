@@ -15,6 +15,11 @@ public class UserController {
 
     private final UserService userService;
 
+    @PostMapping("/alone")
+    public void alone(@RequestBody @Email String email) {
+        userService.alone(email);
+    }
+
     @PostMapping
     public void join(@RequestBody @Valid SignUpRequest signUpRequest) {
         userService.join(signUpRequest);
@@ -35,14 +40,14 @@ public class UserController {
         userService.findPassword(findPasswordRequest);
     }
 
-    @PutMapping("/password/charge")
-    public void chargePassword(@RequestBody @Valid ChargePasswordRequest chargePasswordRequest) {
-        userService.chargePassword(chargePasswordRequest);
+    @PutMapping("/password/change")
+    public void changePassword(@RequestBody @Valid ChangePasswordRequest changePasswordRequest) {
+        userService.changePassword(changePasswordRequest);
     }
 
-    @GetMapping("/{user_id}")
-    public ProfileResponse getProfile(@PathVariable Integer user_id) {
-        return userService.getProfile(user_id);
+    @GetMapping
+    public ProfileResponse getProfile(@RequestParam("nickName") @Valid String nickName) {
+        return userService.getProfile(nickName);
     }
 
     @PutMapping
