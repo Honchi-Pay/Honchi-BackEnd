@@ -1,8 +1,13 @@
 package honchi.api.domain.user.domain;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import java.io.Serializable;
 import java.util.Objects;
 
+@Getter
+@Setter
 public class StarPK implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -10,22 +15,6 @@ public class StarPK implements Serializable {
     private Integer userId;
 
     private Integer targetId;
-
-    public Integer getUserId() {
-        return userId;
-    }
-
-    public void setUserId(Integer userId) {
-        this.userId = userId;
-    }
-
-    public Integer getTargetId() {
-        return targetId;
-    }
-
-    public void setTargetId(Integer targetId) {
-        this.targetId = targetId;
-    }
 
     @Override
     public boolean equals(Object o) {
