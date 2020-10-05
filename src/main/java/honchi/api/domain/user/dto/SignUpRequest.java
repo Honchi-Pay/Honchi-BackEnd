@@ -23,5 +23,6 @@ public class SignUpRequest {
     @NotBlank
     private String phoneNumber;
 
+    @NotBlank
     private Sex sex;
 }
