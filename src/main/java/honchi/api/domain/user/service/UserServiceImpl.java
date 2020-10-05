@@ -1,6 +1,5 @@
 package honchi.api.domain.user.service;
 
-import honchi.api.domain.auth.exception.ExpiredTokenException;
 import honchi.api.domain.user.domain.EmailVerification;
 import honchi.api.domain.user.domain.Star;
 import honchi.api.domain.user.domain.User;
@@ -116,7 +115,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void changePassword(ChangePasswordRequest changePasswordRequest) {
-        User user = userRepository.findByEmail(ExpiredToken(authenticationFacade.getUserEmail()))
+        User user = userRepository.findByEmail(authenticationFacade.getUserEmail())
                 .orElseThrow(UserNotFoundException::new);
 
         if (passwordEncoder.matches(changePasswordRequest.getPassword(), user.getPassword()))
@@ -131,7 +130,7 @@ public class UserServiceImpl implements UserService {
     public ProfileResponse getProfile(String nickName) {
         User profile = userRepository.findByNickName(nickName).orElseThrow(UserNotFoundException::new);
 
-        User user = userRepository.findByEmail(ExpiredToken(authenticationFacade.getUserEmail()))
+        User user = userRepository.findByEmail(authenticationFacade.getUserEmail())
                 .orElseThrow(UserNotFoundException::new);
 
         UserImage image = imageRepository.findByUserId(profile.getId());
@@ -157,7 +156,7 @@ public class UserServiceImpl implements UserService {
     @SneakyThrows
     @Override
     public void updateProfile(ProfileUpdateRequest profileUpdateRequest) {
-        User user = userRepository.findByEmail(ExpiredToken(authenticationFacade.getUserEmail()))
+        User user = userRepository.findByEmail(authenticationFacade.getUserEmail())
                 .orElseThrow(UserNotFoundException::new);
 
         if(profileUpdateRequest.getProfileImage() != null) {
@@ -194,7 +193,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void star(StarRequest starRequest) {
-        User user = userRepository.findByEmail(ExpiredToken(authenticationFacade.getUserEmail()))
+        User user = userRepository.findByEmail(authenticationFacade.getUserEmail())
                 .orElseThrow(UserNotFoundException::new);
 
         User profile = userRepository.findById(starRequest.getTargetId())
@@ -202,8 +201,7 @@ public class UserServiceImpl implements UserService {
 
         if(user.getId().equals(profile.getId())) throw new UserSameException();
 
-        if(starRequest.getTargetId() == null || starRequest.getStar() == null ||
-                starRequest.getStar() > 5 || starRequest.getStar() < 1)
+        if(starRequest.getStar() > 5 || starRequest.getStar() < 1)
             throw new BadRequestException();
 
         Star star = new Star();
@@ -221,11 +219,6 @@ public class UserServiceImpl implements UserService {
                 .targetId(profile.getId())
                 .star(star.getStar())
                 .build());
-    }
-
-    private String ExpiredToken(String email) {
-        if (email.equals("anonymousUser")) throw new ExpiredTokenException();
-        return email;
     }
 
     private String randomCode() {
