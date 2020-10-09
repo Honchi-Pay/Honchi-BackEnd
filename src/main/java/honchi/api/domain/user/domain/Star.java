@@ -6,7 +6,6 @@ import javax.persistence.*;
 import java.io.Serializable;
 
 @Getter
-@Setter
 @Builder
 @Table
 @Entity
@@ -24,4 +23,8 @@ public class Star implements Serializable {
     private Integer targetId;
 
     private Double star;
+
+    public void setStar(double star) {
+        this.star = star;
+    }
 }

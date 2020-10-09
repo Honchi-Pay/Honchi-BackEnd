@@ -126,6 +126,7 @@ public class UserServiceImpl implements UserService {
         userRepository.save(user);
     }
 
+    @SneakyThrows
     @Override
     public ProfileResponse getProfile(String nickName) {
         User profile = userRepository.findByNickName(nickName).orElseThrow(UserNotFoundException::new);
