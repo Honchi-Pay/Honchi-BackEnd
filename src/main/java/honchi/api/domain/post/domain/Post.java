@@ -1,8 +1,6 @@
 package honchi.api.domain.post.domain;
 
 import honchi.api.domain.post.domain.enums.Category;
-import honchi.api.domain.post.domain.enums.FoodType;
-import honchi.api.domain.post.domain.enums.ProductType;
 import lombok.*;
 
 import javax.persistence.*;
@@ -10,7 +8,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
-@Setter
 @Builder
 @Entity
 @AllArgsConstructor
@@ -36,9 +33,19 @@ public class Post {
     @Column(nullable = false)
     private String item;
 
+    @Column(nullable = false)
+    private Double lon;
+
+    @Column(nullable = false)
+    private Double lat;
+
     @OneToMany(cascade = CascadeType.ALL)
     @OrderColumn
     private List<PostImage> images;
 
     private LocalDateTime createdAt;
+
+    public void setImages(List<PostImage> images) {
+        this.images = images;
+    }
 }

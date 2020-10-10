@@ -51,6 +51,8 @@ public class PostServiceImpl implements PostService {
                         .userId(user.getId())
                         .category(postWriteRequest.getCategory())
                         .item(item.getCategory(postWriteRequest.getItem()))
+                        .lat(postWriteRequest.getLat())
+                        .lon(postWriteRequest.getLon())
                         .createdAt(LocalDateTime.now())
                         .build()
         );
