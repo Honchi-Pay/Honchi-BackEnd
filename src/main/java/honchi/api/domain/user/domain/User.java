@@ -35,6 +35,10 @@ public class User {
     @OneToOne(cascade = CascadeType.ALL)
     private UserImage image;
 
+    private Double lat;
+
+    private Double lon;
+
     @Builder
     public User(String email, String password, String nickName, String phoneNumber, Sex sex) {
         this.email = email;
