@@ -24,5 +24,11 @@ public class PostWriteRequest {
     @NotBlank
     private String item;
 
+    @NotNull
+    private Double lat;
+
+    @NotNull
+    private Double lon;
+
     private MultipartFile[] images;
 }
