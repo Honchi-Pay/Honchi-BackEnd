@@ -5,7 +5,9 @@ import honchi.api.domain.post.domain.PostImage;
 import honchi.api.domain.post.domain.enums.Category;
 import honchi.api.domain.post.domain.repository.PostImageRepository;
 import honchi.api.domain.post.domain.repository.PostRepository;
+import honchi.api.domain.post.dto.PostContentResponse;
 import honchi.api.domain.post.dto.PostWriteRequest;
+import honchi.api.domain.post.exception.PostNotFoundException;
 import honchi.api.domain.user.domain.User;
 import honchi.api.domain.user.domain.repository.UserRepository;
 import honchi.api.global.config.security.AuthenticationFacade;
@@ -59,7 +61,7 @@ public class PostServiceImpl implements PostService {
 
         List<PostImage> postImages = new ArrayList<>();
 
-        if(postWriteRequest.getImages() != null) {
+        if (postWriteRequest.getImages() != null) {
             for (MultipartFile file : postWriteRequest.getImages()) {
                 String imageName = UUID.randomUUID().toString();
 
@@ -78,5 +80,31 @@ public class PostServiceImpl implements PostService {
         post.setImages(postImages);
 
         postRepository.save(post);
+    }
+
+    @Override
+    public PostContentResponse getContent(Integer postId) {
+        User user = userRepository.findByEmail(authenticationFacade.getUserEmail())
+                .orElseThrow(UserNotFoundException::new);
+
+        Post post = postRepository.findById(postId)
+                .orElseThrow(PostNotFoundException::new);
+
+        User writer = userRepository.findById(post.getUserId())
+                .orElseThrow(UserNotFoundException::new);
+
+        List<String> postImages = new ArrayList<>();
+
+        postImageRepository.findAllByPostId(postId)
+                .forEach(postImage -> postImages.add(postImage.getImageName()));
+
+        return PostContentResponse.builder()
+                .title(post.getTitle())
+                .content(post.getContent())
+                .writer(writer.getNickName())
+                .images(postImages)
+                .createdAt(post.getCreatedAt())
+                .isMine(writer.equals(user))
+                .build();
     }
 }
