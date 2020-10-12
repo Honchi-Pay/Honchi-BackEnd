@@ -1,9 +1,11 @@
 package honchi.api.domain.user.domain;
 
+import honchi.api.domain.post.domain.Post;
 import honchi.api.domain.user.domain.enums.Sex;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Getter
 @Setter
@@ -34,6 +36,9 @@ public class User {
 
     @OneToOne(cascade = CascadeType.ALL)
     private UserImage image;
+
+    @OneToMany(mappedBy = "userId", cascade = CascadeType.ALL)
+    private List<Post> posts;
 
     private Double lat;
 
