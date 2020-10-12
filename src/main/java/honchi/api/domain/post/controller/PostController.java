@@ -1,12 +1,10 @@
 package honchi.api.domain.post.controller;
 
+import honchi.api.domain.post.dto.PostContentResponse;
 import honchi.api.domain.post.dto.PostWriteRequest;
 import honchi.api.domain.post.service.PostService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
@@ -20,5 +18,10 @@ public class PostController {
     @PostMapping
     public void write(@ModelAttribute @Valid PostWriteRequest postWriteRequest) {
         postService.write(postWriteRequest);
+    }
+
+    @GetMapping("/{postId}")
+    public PostContentResponse getContent(@PathVariable Integer postId) {
+        return postService.getContent(postId);
     }
 }
