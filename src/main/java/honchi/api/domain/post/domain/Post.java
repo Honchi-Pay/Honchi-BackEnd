@@ -18,7 +18,7 @@ public class Post {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer Id;
+    private Integer id;
 
     @Column(nullable = false)
     private Integer userId;
@@ -43,7 +43,7 @@ public class Post {
 
     @OneToMany(cascade = CascadeType.ALL)
     @OrderColumn
-    @JoinColumn(name = "postId")
+    @JoinColumn(name = "id")
     private List<PostImage> image;
 
     private LocalDateTime createdAt;
