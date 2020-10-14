@@ -13,6 +13,6 @@ public enum Category {
 
     @SneakyThrows
     public String getCategory(String item) {
-        return String.valueOf(category.getField(item).get(item));
+        return category.getField(item).getName();
     }
 }
