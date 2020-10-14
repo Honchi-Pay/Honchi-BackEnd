@@ -1,9 +1,6 @@
 package honchi.api.domain.post.controller;
 
-import honchi.api.domain.post.dto.PostContentResponse;
-import honchi.api.domain.post.dto.PostListRequest;
-import honchi.api.domain.post.dto.PostListResponse;
-import honchi.api.domain.post.dto.PostWriteRequest;
+import honchi.api.domain.post.dto.*;
 import honchi.api.domain.post.service.PostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -31,5 +28,11 @@ public class PostController {
     @GetMapping("/{postId}")
     public PostContentResponse getContent(@PathVariable Integer postId) {
         return postService.getContent(postId);
+    }
+
+    @PutMapping("/{postId}")
+    public void fixPost(@ModelAttribute @Valid PostFixRequest postFixRequest,
+                        @PathVariable Integer postId) {
+        postService.fixPost(postId, postFixRequest);
     }
 }
