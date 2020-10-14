@@ -35,4 +35,9 @@ public class PostController {
                         @PathVariable Integer postId) {
         postService.fixPost(postId, postFixRequest);
     }
+
+    @DeleteMapping("/{postId}")
+    public void deletePost(@PathVariable Integer postId) {
+        postService.deletePost(postId);
+    }
 }
