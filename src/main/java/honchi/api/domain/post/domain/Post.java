@@ -1,6 +1,7 @@
 package honchi.api.domain.post.domain;
 
 import honchi.api.domain.post.domain.enums.Category;
+import honchi.api.domain.post.domain.enums.Completion;
 import lombok.*;
 
 import javax.persistence.*;
@@ -41,11 +42,17 @@ public class Post {
 
     @OneToMany(cascade = CascadeType.ALL)
     @OrderColumn
-    private List<PostImage> images;
+    @JoinColumn(name = "postId")
+    private List<PostImage> image;
 
     private LocalDateTime createdAt;
 
-    public void setImages(List<PostImage> images) {
-        this.images = images;
+    @Enumerated(EnumType.STRING)
+    private Completion completion;
+
+    private LocalDateTime completeAt;
+
+    public void setImages(List<PostImage> image) {
+        this.image = image;
     }
 }
