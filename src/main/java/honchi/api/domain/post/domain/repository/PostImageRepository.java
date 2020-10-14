@@ -10,4 +10,6 @@ import java.util.List;
 public interface PostImageRepository extends CrudRepository<PostImage, Integer> {
 
     List<PostImage> findAllByPostId(Integer postId);
+
+    PostImage findTop1ByPostId(Integer postId);
 }
