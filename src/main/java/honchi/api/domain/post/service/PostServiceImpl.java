@@ -154,6 +154,7 @@ public class PostServiceImpl implements PostService {
                 .build();
     }
 
+    @SneakyThrows
     @Override
     public void fixPost(Integer postId, PostFixRequest postFixRequest) {
         User user = userRepository.findByEmail(authenticationFacade.getUserEmail())
@@ -171,5 +172,25 @@ public class PostServiceImpl implements PostService {
         post.setItem(postFixRequest.getItem());
 
         postRepository.save(post);
+
+        List<PostImage> postImages = postImageRepository.findAllByPostId(postId);
+
+        for (PostImage postImage : postImages) {
+            new File(imageDirPath, postImage.getImageName()).deleteOnExit();
+        }
+
+        postImageRepository.deleteById(postId);
+
+        for (MultipartFile file : postFixRequest.getImages()) {
+            String fileName = UUID.randomUUID().toString();
+            postImageRepository.save(
+                    PostImage.builder()
+                            .postId(postId)
+                            .imageName(fileName)
+                            .build()
+            );
+
+            file.transferTo(new File(imageDirPath, fileName));
+        }
     }
 }
