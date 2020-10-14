@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
+@Setter
 @Builder
 @Entity
 @AllArgsConstructor
@@ -51,8 +52,4 @@ public class Post {
     private Completion completion;
 
     private LocalDateTime completeAt;
-
-    public void setImages(List<PostImage> image) {
-        this.image = image;
-    }
 }
