@@ -3,9 +3,12 @@ package honchi.api.domain.post.service;
 import honchi.api.domain.post.domain.Post;
 import honchi.api.domain.post.domain.PostImage;
 import honchi.api.domain.post.domain.enums.Category;
+import honchi.api.domain.post.domain.enums.Completion;
 import honchi.api.domain.post.domain.repository.PostImageRepository;
 import honchi.api.domain.post.domain.repository.PostRepository;
 import honchi.api.domain.post.dto.PostContentResponse;
+import honchi.api.domain.post.dto.PostListRequest;
+import honchi.api.domain.post.dto.PostListResponse;
 import honchi.api.domain.post.dto.PostWriteRequest;
 import honchi.api.domain.post.exception.PostNotFoundException;
 import honchi.api.domain.user.domain.User;
@@ -56,6 +59,7 @@ public class PostServiceImpl implements PostService {
                         .lat(postWriteRequest.getLat())
                         .lon(postWriteRequest.getLon())
                         .createdAt(LocalDateTime.now())
+                        .completion(Completion.UNCOMPLETION)
                         .build()
         );
 
@@ -80,6 +84,49 @@ public class PostServiceImpl implements PostService {
         post.setImages(postImages);
 
         postRepository.save(post);
+    }
+
+    @Override
+    public List<PostListResponse> getList(PostListRequest postListRequest) {
+        User user = userRepository.findByEmail(authenticationFacade.getUserEmail())
+                .orElseThrow(UserNotFoundException::new);
+
+        if (postListRequest.getLat() != 0.0 && postListRequest.getLon() != 0.0) {
+            user.setLat(postListRequest.getLat());
+            user.setLon(postListRequest.getLon());
+
+            userRepository.save(user);
+        }
+
+        List<PostListResponse> postListResponses = new ArrayList<>();
+
+        for (Post post : postRepository.findAllByCompletionAndCreatedAtAfter(
+                Completion.UNCOMPLETION, LocalDateTime.now().minusMonths(1))) {
+
+            if(postRepository.findById(post.getId(), post.getLat(), post.getLon(),
+                    user.getLat(), user.getLon(), postListRequest.getDist()).isPresent()) {
+
+                Post list = postRepository.findById(post.getId(), post.getLat(), post.getLon(),
+                        user.getLat(), user.getLon(), postListRequest.getDist())
+                        .orElseGet(null);
+
+                User writer = userRepository.findById(list.getUserId())
+                        .orElseThrow(UserNotFoundException::new);
+
+                PostImage postImage = postImageRepository.findTop1ByPostId(list.getId());
+
+                postListResponses.add(
+                        PostListResponse.builder()
+                                .postId(list.getId())
+                                .title(list.getTitle())
+                                .writer(writer.getNickName())
+                                .image(postImage != null ? postImage.getImageName() : null)
+                                .createdAt(list.getCreatedAt())
+                                .build()
+                );
+            }
+        }
+        return postListResponses;
     }
 
     @Override
