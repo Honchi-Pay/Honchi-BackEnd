@@ -10,4 +10,5 @@ public interface PostService {
     List<PostListResponse> getList(PostListRequest postListRequest);
     PostContentResponse getContent(Integer postId);
     void fixPost(Integer postId, PostFixRequest postFixRequest);
+    void deletePost(Integer postId);
 }

@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
+import java.nio.file.Files;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -163,8 +164,7 @@ public class PostServiceImpl implements PostService {
         Post post = postRepository.findById(postId)
                 .orElseThrow(PostNotFoundException::new);
 
-        if (!user.getId().equals(post.getUserId()))
-            throw new UserNotSameException();
+        if (!user.getId().equals(post.getUserId())) throw new UserNotSameException();
 
         post.setTitle(postFixRequest.getTitle());
         post.setContent(postFixRequest.getContent());
@@ -192,5 +192,23 @@ public class PostServiceImpl implements PostService {
 
             file.transferTo(new File(imageDirPath, fileName));
         }
+    }
+
+    @SneakyThrows
+    @Override
+    public void deletePost(Integer postId) {
+        User user = userRepository.findByEmail(authenticationFacade.getUserEmail())
+                .orElseThrow(UserNotFoundException::new);
+
+        Post post = postRepository.findById(postId)
+                .orElseThrow(PostNotFoundException::new);
+
+        if (!user.getId().equals(post.getUserId())) throw new UserNotSameException();
+
+        for (PostImage postImage : postImageRepository.findAllByPostId(postId)) {
+            Files.delete(new File(imageDirPath, postImage.getImageName()).toPath());
+        }
+
+        postRepository.deleteById(postId);
     }
 }
