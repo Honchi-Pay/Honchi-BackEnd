@@ -19,10 +19,10 @@ public interface PostRepository extends JpaRepository<Post, Integer> {
     @Query(value = " select * from post" +
             " where id = :postId and (6371 * acos(cos(radians(:userLat)) * cos(radians(:lat)) * cos(radians(:lon) - " +
             "radians(:userLon)) + sin(radians(:userLat)) * sin(radians(:lat)))) <= :dist", nativeQuery = true)
-    Optional<Post> findById(@Param("postId") int postId,
-                           @Param("lat") double lat,
-                           @Param("lon") double lon,
-                           @Param("userLat") double userLat,
-                           @Param("userLon") double userLon,
-                           @Param("dist") int dist);
+    Optional<Post> findByIdAndLatAndLon(@Param("postId") int postId,
+                                        @Param("lat") double lat,
+                                        @Param("lon") double lon,
+                                        @Param("userLat") double userLat,
+                                        @Param("userLon") double userLon,
+                                        @Param("dist") int dist);
 }

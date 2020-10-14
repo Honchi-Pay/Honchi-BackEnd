@@ -6,11 +6,9 @@ import honchi.api.domain.post.domain.enums.Category;
 import honchi.api.domain.post.domain.enums.Completion;
 import honchi.api.domain.post.domain.repository.PostImageRepository;
 import honchi.api.domain.post.domain.repository.PostRepository;
-import honchi.api.domain.post.dto.PostContentResponse;
-import honchi.api.domain.post.dto.PostListRequest;
-import honchi.api.domain.post.dto.PostListResponse;
-import honchi.api.domain.post.dto.PostWriteRequest;
+import honchi.api.domain.post.dto.*;
 import honchi.api.domain.post.exception.PostNotFoundException;
+import honchi.api.domain.post.exception.UserNotSameException;
 import honchi.api.domain.user.domain.User;
 import honchi.api.domain.user.domain.repository.UserRepository;
 import honchi.api.global.config.security.AuthenticationFacade;
@@ -25,6 +23,7 @@ import java.io.File;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -81,7 +80,7 @@ public class PostServiceImpl implements PostService {
             }
         }
 
-        post.setImages(postImages);
+        post.setImage(postImages);
 
         postRepository.save(post);
     }
@@ -100,32 +99,32 @@ public class PostServiceImpl implements PostService {
 
         List<PostListResponse> postListResponses = new ArrayList<>();
 
-        for (Post post : postRepository.findAllByCompletionAndCreatedAtAfter(
+        for (Post posts : postRepository.findAllByCompletionAndCreatedAtAfter(
                 Completion.UNCOMPLETION, LocalDateTime.now().minusMonths(1))) {
 
-            if(postRepository.findById(post.getId(), post.getLat(), post.getLon(),
-                    user.getLat(), user.getLon(), postListRequest.getDist()).isPresent()) {
 
-                Post list = postRepository.findById(post.getId(), post.getLat(), post.getLon(),
-                        user.getLat(), user.getLon(), postListRequest.getDist())
-                        .orElseGet(null);
+            Optional<Post> list = postRepository.findByIdAndLatAndLon(posts.getId(), posts.getLat(),
+                    posts.getLon(), user.getLat(), user.getLon(), postListRequest.getDist());
 
-                User writer = userRepository.findById(list.getUserId())
+            list.ifPresent(post -> {
+                User writer = userRepository.findById(post.getUserId())
                         .orElseThrow(UserNotFoundException::new);
 
-                PostImage postImage = postImageRepository.findTop1ByPostId(list.getId());
+                PostImage postImage = postImageRepository.findTop1ByPostId(post.getId());
 
                 postListResponses.add(
                         PostListResponse.builder()
-                                .postId(list.getId())
-                                .title(list.getTitle())
+                                .postId(post.getId())
+                                .title(post.getTitle())
                                 .writer(writer.getNickName())
                                 .image(postImage != null ? postImage.getImageName() : null)
-                                .createdAt(list.getCreatedAt())
+                                .createdAt(post.getCreatedAt())
                                 .build()
                 );
-            }
+            });
+
         }
+
         return postListResponses;
     }
 
@@ -153,5 +152,24 @@ public class PostServiceImpl implements PostService {
                 .createdAt(post.getCreatedAt())
                 .isMine(writer.equals(user))
                 .build();
+    }
+
+    @Override
+    public void fixPost(Integer postId, PostFixRequest postFixRequest) {
+        User user = userRepository.findByEmail(authenticationFacade.getUserEmail())
+                .orElseThrow(UserNotFoundException::new);
+
+        Post post = postRepository.findById(postId)
+                .orElseThrow(PostNotFoundException::new);
+
+        if (!user.getId().equals(post.getUserId()))
+            throw new UserNotSameException();
+
+        post.setTitle(postFixRequest.getTitle());
+        post.setContent(postFixRequest.getContent());
+        post.setCategory(postFixRequest.getCategory());
+        post.setItem(postFixRequest.getItem());
+
+        postRepository.save(post);
     }
 }
