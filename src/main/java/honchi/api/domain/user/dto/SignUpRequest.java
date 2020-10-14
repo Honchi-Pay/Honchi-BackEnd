@@ -6,6 +6,7 @@ import lombok.Setter;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 @Getter
 @Setter
@@ -23,6 +24,6 @@ public class SignUpRequest {
     @NotBlank
     private String phoneNumber;
 
-    @NotBlank
+    @NotNull
     private Sex sex;
 }
