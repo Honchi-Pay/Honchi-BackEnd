@@ -59,4 +59,10 @@ public class UserController {
     public void star(@RequestBody @Valid StarRequest starRequest) {
         userService.star(starRequest);
     }
+
+
+    @DeleteMapping
+    public void deleteUser(@RequestParam("nickName") @Valid String nickName) {
+        userService.deleteUser(nickName);
+    }
 }
