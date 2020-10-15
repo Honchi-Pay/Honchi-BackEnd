@@ -9,6 +9,7 @@ public interface PostService {
     void write(PostWriteRequest postWriteRequest);
     List<PostListResponse> getList(PostListRequest postListRequest);
     PostContentResponse getContent(Integer postId);
+    void attendPost(Integer postId);
     void fixPost(Integer postId, PostFixRequest postFixRequest);
     void deletePost(Integer postId);
 }
