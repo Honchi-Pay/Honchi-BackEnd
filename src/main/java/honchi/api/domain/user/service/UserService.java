@@ -13,4 +13,5 @@ public interface UserService {
     ProfileResponse getProfile(String nickName);
     void updateProfile(ProfileUpdateRequest profileUpdateRequest);
     void star(StarRequest starRequest);
+    void deleteUser(String nickName);
 }

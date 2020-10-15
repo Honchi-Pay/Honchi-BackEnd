@@ -1,5 +1,6 @@
 package honchi.api.domain.user.service;
 
+import honchi.api.global.error.exception.UserNotSameException;
 import honchi.api.domain.user.domain.EmailVerification;
 import honchi.api.domain.user.domain.Star;
 import honchi.api.domain.user.domain.User;
@@ -200,7 +201,7 @@ public class UserServiceImpl implements UserService {
         User profile = userRepository.findById(starRequest.getTargetId())
                 .orElseThrow(UserNotFoundException::new);
 
-        if(user.getId().equals(profile.getId())) throw new UserSameException();
+        if(user.equals(profile)) throw new UserSameException();
 
         if(starRequest.getStar() > 5 || starRequest.getStar() < 1)
             throw new BadRequestException();
@@ -220,6 +221,19 @@ public class UserServiceImpl implements UserService {
                 .targetId(profile.getId())
                 .star(star.getStar())
                 .build());
+    }
+
+    @Override
+    public void deleteUser(String nickName) {
+        User user = userRepository.findByEmail(authenticationFacade.getUserEmail())
+                .orElseThrow(UserNotFoundException::new);
+
+        User profile = userRepository.findByNickName(nickName)
+                .orElseThrow(UserNotFoundException::new);
+
+        if(!user.equals(profile)) throw new UserNotSameException();
+
+        userRepository.deleteById(profile.getId());
     }
 
     private String randomCode() {
