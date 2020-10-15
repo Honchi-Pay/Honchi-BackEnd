@@ -8,7 +8,7 @@ import honchi.api.domain.post.domain.repository.PostImageRepository;
 import honchi.api.domain.post.domain.repository.PostRepository;
 import honchi.api.domain.post.dto.*;
 import honchi.api.domain.post.exception.PostNotFoundException;
-import honchi.api.domain.post.exception.UserNotSameException;
+import honchi.api.global.error.exception.UserNotSameException;
 import honchi.api.domain.user.domain.User;
 import honchi.api.domain.user.domain.repository.UserRepository;
 import honchi.api.global.config.security.AuthenticationFacade;
