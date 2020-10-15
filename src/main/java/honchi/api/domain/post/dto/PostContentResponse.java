@@ -21,4 +21,6 @@ public class PostContentResponse {
     private LocalDateTime createdAt;
 
     private boolean isMine;
+
+    private boolean isAttend;
 }
