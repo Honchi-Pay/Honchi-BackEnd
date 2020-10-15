@@ -1,18 +1,21 @@
 package honchi.api.domain.post.service;
 
 import honchi.api.domain.post.domain.Post;
+import honchi.api.domain.post.domain.PostAttend;
 import honchi.api.domain.post.domain.PostImage;
 import honchi.api.domain.post.domain.enums.Category;
 import honchi.api.domain.post.domain.enums.Completion;
+import honchi.api.domain.post.domain.repository.PostAttendRepository;
 import honchi.api.domain.post.domain.repository.PostImageRepository;
 import honchi.api.domain.post.domain.repository.PostRepository;
 import honchi.api.domain.post.dto.*;
 import honchi.api.domain.post.exception.PostNotFoundException;
-import honchi.api.global.error.exception.UserNotSameException;
 import honchi.api.domain.user.domain.User;
 import honchi.api.domain.user.domain.repository.UserRepository;
+import honchi.api.domain.user.exception.UserSameException;
 import honchi.api.global.config.security.AuthenticationFacade;
 import honchi.api.global.error.exception.UserNotFoundException;
+import honchi.api.global.error.exception.UserNotSameException;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Value;
@@ -34,6 +37,7 @@ public class PostServiceImpl implements PostService {
     private final UserRepository userRepository;
     private final PostRepository postRepository;
     private final PostImageRepository postImageRepository;
+    private final PostAttendRepository postAttendRepository;
 
     private final AuthenticationFacade authenticationFacade;
 
@@ -152,7 +156,30 @@ public class PostServiceImpl implements PostService {
                 .images(postImages)
                 .createdAt(post.getCreatedAt())
                 .isMine(writer.equals(user))
+                .isAttend(postAttendRepository.findByPostIdAndUserId(postId, user.getId()).isPresent())
                 .build();
+    }
+
+    @Override
+    public void attendPost(Integer postId) {
+        User user = userRepository.findByEmail(authenticationFacade.getUserEmail())
+                .orElseThrow(UserNotFoundException::new);
+
+        Post post = postRepository.findById(postId)
+                .orElseThrow(PostNotFoundException::new);
+
+        if (user.getId().equals(post.getUserId())) throw new UserSameException();
+
+        if (postAttendRepository.findByPostIdAndUserId(postId, user.getId()).isPresent()) {
+            postAttendRepository.deleteByPostIdAndUserId(postId, user.getId());
+        } else {
+            postAttendRepository.save(
+                    PostAttend.builder()
+                            .postId(postId)
+                            .userId(user.getId())
+                            .build()
+            );
+        }
     }
 
     @SneakyThrows

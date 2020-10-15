@@ -30,6 +30,11 @@ public class PostController {
         return postService.getContent(postId);
     }
 
+    @PutMapping("/{postId}/attend")
+    public void attendPost(@PathVariable Integer postId) {
+        postService.attendPost(postId);
+    }
+
     @PutMapping("/{postId}")
     public void fixPost(@ModelAttribute @Valid PostFixRequest postFixRequest,
                         @PathVariable Integer postId) {

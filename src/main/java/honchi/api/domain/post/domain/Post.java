@@ -46,6 +46,9 @@ public class Post {
     @JoinColumn(name = "id")
     private List<PostImage> image;
 
+    @OneToMany(mappedBy = "postId", cascade = CascadeType.ALL)
+    private List<PostAttend> postAttends;
+
     private LocalDateTime createdAt;
 
     @Enumerated(EnumType.STRING)
