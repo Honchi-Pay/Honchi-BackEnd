@@ -1,6 +1,7 @@
 package honchi.api.domain.user.domain;
 
 import honchi.api.domain.post.domain.Post;
+import honchi.api.domain.post.domain.PostAttend;
 import honchi.api.domain.user.domain.enums.Sex;
 import lombok.*;
 
@@ -39,6 +40,12 @@ public class User {
 
     @OneToMany(mappedBy = "userId", cascade = CascadeType.ALL)
     private List<Post> posts;
+
+    @OneToMany(mappedBy = "userId", cascade = CascadeType.ALL)
+    private List<Star> stars;
+
+    @OneToMany(mappedBy = "userId", cascade = CascadeType.ALL)
+    private List<PostAttend> postAttends;
 
     private Double lat;
 
