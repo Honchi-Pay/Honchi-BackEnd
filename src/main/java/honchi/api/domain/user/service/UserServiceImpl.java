@@ -7,7 +7,7 @@ import honchi.api.domain.user.domain.User;
 import honchi.api.domain.user.domain.UserImage;
 import honchi.api.domain.user.domain.enums.EmailVerificationStatus;
 import honchi.api.domain.user.domain.repository.EmailVerificationRepository;
-import honchi.api.domain.user.domain.repository.ImageRepository;
+import honchi.api.domain.user.domain.repository.UserImageRepository;
 import honchi.api.domain.user.domain.repository.StarRepository;
 import honchi.api.domain.user.domain.repository.UserRepository;
 import honchi.api.domain.user.dto.*;
@@ -31,7 +31,7 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final StarRepository starRepository;
-    private final ImageRepository imageRepository;
+    private final UserImageRepository imageRepository;
     private final EmailVerificationRepository verificationRepository;
 
     private final EmailService emailService;
@@ -60,6 +60,14 @@ public class UserServiceImpl implements UserService {
         verificationRepository.findById(email)
                 .filter(EmailVerification::isVerified)
                 .orElseThrow(InvalidAuthEmailException::new);
+
+        userRepository.findByNickName(signUpRequest.getNickName()).ifPresent(user -> {
+            throw new NickNameAlreadyExistException();
+        });
+
+        userRepository.findByPhoneNumber(signUpRequest.getPhoneNumber()).ifPresent(user -> {
+            throw new PhoneNumberAlreadyExistsException();
+        });
 
         userRepository.save(
                 User.builder()
@@ -160,6 +168,10 @@ public class UserServiceImpl implements UserService {
     public void updateProfile(ProfileUpdateRequest profileUpdateRequest) {
         User user = userRepository.findByEmail(authenticationFacade.getUserEmail())
                 .orElseThrow(UserNotFoundException::new);
+
+        userRepository.findByNickName(profileUpdateRequest.getNickName()).ifPresent(users -> {
+            throw new NickNameAlreadyExistException();
+        });
 
         if(profileUpdateRequest.getProfileImage() != null) {
             String imageName = UUID.randomUUID().toString();
