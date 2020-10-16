@@ -5,7 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface ImageRepository extends JpaRepository<UserImage, Integer> {
+public interface UserImageRepository extends JpaRepository<UserImage, Integer> {
     UserImage findByImageName(String imageName);
     UserImage findByUserId(Integer userId);
 }
