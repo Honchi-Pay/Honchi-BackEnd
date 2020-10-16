@@ -35,6 +35,11 @@ public class PostController {
         return postService.getContent(postId);
     }
 
+    @GetMapping("/{postId}/attendList")
+    public List<PostAttendListResponse> getAttendList(@PathVariable Integer postId) {
+        return postService.getAttendList(postId);
+    }
+
     @PutMapping("/{postId}/attend")
     public void attendPost(@PathVariable Integer postId) {
         postService.attendPost(postId);
