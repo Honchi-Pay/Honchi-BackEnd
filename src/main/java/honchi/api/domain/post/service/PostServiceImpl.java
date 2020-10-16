@@ -106,8 +106,6 @@ public class PostServiceImpl implements PostService {
 
         for (Post posts : postRepository.findAllByCompletionAndCreatedAtAfter(
                 Completion.UNCOMPLETION, LocalDateTime.now().minusMonths(1))) {
-
-
             Optional<Post> list = postRepository.findByIdAndLatAndLon(posts.getId(), posts.getLat(),
                     posts.getLon(), user.getLat(), user.getLon(), postListRequest.getDist());
 
@@ -128,6 +126,46 @@ public class PostServiceImpl implements PostService {
                 );
             });
 
+        }
+
+        return postListResponses;
+    }
+
+    @Override
+    public List<PostListResponse> getSearch(PostSearchListRequest postSearchListRequest) {
+        User user = userRepository.findByEmail(authenticationFacade.getUserEmail())
+                .orElseThrow(UserNotFoundException::new);
+
+        if (postSearchListRequest.getLat() != 0.0 && postSearchListRequest.getLon() != 0.0) {
+            user.setLat(postSearchListRequest.getLat());
+            user.setLon(postSearchListRequest.getLon());
+
+            userRepository.save(user);
+        }
+
+        List<PostListResponse> postListResponses = new ArrayList<>();
+
+        for (Post post : postRepository.findAllByTitleContainsAndCompletionAndCreatedAtAfter(
+                postSearchListRequest.getTitle(), Completion.UNCOMPLETION, LocalDateTime.now().minusMonths(1))) {
+            Optional<Post> postList = postRepository.findByIdAndLatAndLon(post.getId(), post.getLat(),
+                    post.getLon(), user.getLat(), user.getLon(), postSearchListRequest.getDist());
+
+            postList.ifPresent(list -> {
+                User writer = userRepository.findById(post.getUserId())
+                        .orElseThrow(UserNotFoundException::new);
+
+                PostImage postImage = postImageRepository.findTop1ByPostId(post.getId());
+
+                postListResponses.add(
+                        PostListResponse.builder()
+                                .postId(list.getId())
+                                .title(list.getTitle())
+                                .writer(writer.getNickName())
+                                .image(postImage != null ? postImage.getImageName() : null)
+                                .createdAt(list.getCreatedAt())
+                                .build()
+                );
+            });
         }
 
         return postListResponses;

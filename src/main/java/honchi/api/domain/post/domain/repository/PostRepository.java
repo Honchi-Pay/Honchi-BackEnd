@@ -18,6 +18,8 @@ public interface PostRepository extends JpaRepository<Post, Integer> {
 
     void deleteById(Integer postId);
 
+    List<Post> findAllByTitleContainsAndCompletionAndCreatedAtAfter(String title, Completion completion, LocalDateTime localDateTime);
+
     @Query(value = " select * from post" +
             " where id = :postId and (6371 * acos(cos(radians(:userLat)) * cos(radians(:lat)) * cos(radians(:lon) - " +
             "radians(:userLon)) + sin(radians(:userLat)) * sin(radians(:lat)))) <= :dist", nativeQuery = true)
