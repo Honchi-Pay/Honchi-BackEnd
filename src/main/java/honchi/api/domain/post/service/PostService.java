@@ -10,6 +10,7 @@ public interface PostService {
     List<PostListResponse> getList(PostListRequest postListRequest);
     List<PostListResponse> getSearch(PostSearchListRequest postSearchListRequest);
     PostContentResponse getContent(Integer postId);
+    List<PostAttendListResponse> getAttendList(Integer postId);
     void attendPost(Integer postId);
     void fixPost(Integer postId, PostFixRequest postFixRequest);
     void deletePost(Integer postId);

@@ -11,6 +11,8 @@ import honchi.api.domain.post.domain.repository.PostRepository;
 import honchi.api.domain.post.dto.*;
 import honchi.api.domain.post.exception.PostNotFoundException;
 import honchi.api.domain.user.domain.User;
+import honchi.api.domain.user.domain.UserImage;
+import honchi.api.domain.user.domain.repository.UserImageRepository;
 import honchi.api.domain.user.domain.repository.UserRepository;
 import honchi.api.domain.user.exception.UserSameException;
 import honchi.api.global.config.security.AuthenticationFacade;
@@ -36,6 +38,7 @@ public class PostServiceImpl implements PostService {
 
     private final UserRepository userRepository;
     private final PostRepository postRepository;
+    private final UserImageRepository userImageRepository;
     private final PostImageRepository postImageRepository;
     private final PostAttendRepository postAttendRepository;
 
@@ -196,6 +199,47 @@ public class PostServiceImpl implements PostService {
                 .isMine(writer.equals(user))
                 .isAttend(postAttendRepository.findByPostIdAndUserId(postId, user.getId()).isPresent())
                 .build();
+    }
+
+    @Override
+    public List<PostAttendListResponse> getAttendList(Integer postId) {
+        User user = userRepository.findByEmail(authenticationFacade.getUserEmail())
+                .orElseThrow(UserNotFoundException::new);
+
+        Post post = postRepository.findById(postId)
+                .orElseThrow(PostNotFoundException::new);
+
+        if(!user.getId().equals(post.getUserId())) throw new UserNotSameException();
+
+        List<PostAttendListResponse> postAttendListResponses = new ArrayList<>();
+
+        User writer = userRepository.findById(post.getUserId())
+                .orElseThrow(UserNotFoundException::new);
+
+        UserImage userImage = userImageRepository.findByUserId(writer.getId());
+
+        postAttendListResponses.add(
+                PostAttendListResponse.builder()
+                        .userName(writer.getNickName())
+                        .image(userImage.getImageName())
+                        .build()
+        );
+
+        for (PostAttend attend : postAttendRepository.findByPostId(postId)) {
+            User attender = userRepository.findById(attend.getUserId())
+                    .orElseThrow(UserNotFoundException::new);
+
+            UserImage profileImage = userImageRepository.findByUserId(attender.getId());
+
+            postAttendListResponses.add(
+                    PostAttendListResponse.builder()
+                            .userName(attender.getNickName())
+                            .image(profileImage.getImageName())
+                            .build()
+            );
+        }
+
+        return postAttendListResponses;
     }
 
     @Override
