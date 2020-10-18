@@ -6,7 +6,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import javax.validation.constraints.Email;
 
 @RestController
 @RequestMapping("/user")
@@ -16,23 +15,13 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping("/alone")
-    public void alone(@RequestBody @Email String email) {
+    public void alone(@RequestBody @Valid String email) {
         userService.alone(email);
     }
 
     @PostMapping
     public void join(@RequestBody @Valid SignUpRequest signUpRequest) {
         userService.join(signUpRequest);
-    }
-
-    @PostMapping("/email/verify")
-    public void sendEmail(@RequestParam("email") @Email String email) {
-        userService.sendEmail(email);
-    }
-
-    @PutMapping("/email/verify")
-    public void verifyEmail(@RequestBody @Valid VerifyCodeRequest verifyCodeRequest) {
-        userService.verifyEmail(verifyCodeRequest);
     }
 
     @PutMapping("/password/find")
