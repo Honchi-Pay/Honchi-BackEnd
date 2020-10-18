@@ -1,5 +1,11 @@
 package honchi.api.domain.user.service;
 
+import honchi.api.domain.user.domain.EmailVerification;
+import honchi.api.domain.user.domain.enums.EmailVerificationStatus;
+import honchi.api.domain.user.domain.repository.EmailVerificationRepository;
+import honchi.api.domain.user.dto.VerifyCodeRequest;
+import honchi.api.domain.user.exception.InvalidAuthCodeException;
+import honchi.api.domain.user.exception.InvalidAuthEmailException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
@@ -7,9 +13,13 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
+import java.util.Random;
+
 @Service
 @RequiredArgsConstructor
 public class EmailServiceImpl implements EmailService {
+
+    private final EmailVerificationRepository verificationRepository;
 
     private final JavaMailSender javaMailSender;
 
@@ -17,13 +27,57 @@ public class EmailServiceImpl implements EmailService {
     private String adminEmail;
 
     @Override
+    public void sendEmail(String email) {
+        String code = randomCode();
+
+        this.sendEmail(email, code);
+
+        verificationRepository.save(
+                EmailVerification.builder()
+                        .email(email)
+                        .code(code)
+                        .status(EmailVerificationStatus.UNVERIFIED)
+                        .build()
+        );
+    }
+
+    @Override
+    public void verifyEmail(VerifyCodeRequest verifyCodeRequest) {
+        String email = verifyCodeRequest.getEmail();
+        String code = verifyCodeRequest.getCode();
+
+        EmailVerification emailVerification = verificationRepository.findById(email)
+                .orElseThrow(InvalidAuthEmailException::new);
+
+        if(!emailVerification.getCode().equals(code))
+            throw new InvalidAuthCodeException();
+
+        verificationRepository.save(emailVerification.verify());
+    }
+
     @Async
-    public void sendEmail(String email, String code) {
+    void sendEmail(String email, String code) {
         SimpleMailMessage mailMessage = new SimpleMailMessage();
         mailMessage.setFrom(adminEmail);
         mailMessage.setTo(email);
         mailMessage.setSubject("혼치페이 이메일 인증입니다.");
         mailMessage.setText("계정 인증을 위한 코드는 " + code + "입니다.");
         javaMailSender.send(mailMessage);
+    }
+
+    private String randomCode() {
+        String[] codes = {"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L",
+                "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X",
+                "Y", "Z", "1", "2", "3", "4", "5", "6", "7", "8", "9", "0"};
+
+        Random random = new Random(System.currentTimeMillis());
+        int tableLength = codes.length;
+        StringBuffer buf = new StringBuffer();
+
+        for (int i = 0; i < 6; i++) {
+            buf.append(codes[random.nextInt(tableLength)]);
+        }
+
+        return buf.toString();
     }
 }
