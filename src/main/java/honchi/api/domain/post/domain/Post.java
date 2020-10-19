@@ -41,9 +41,8 @@ public class Post {
     @Column(nullable = false)
     private Double lat;
 
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "postId", cascade = CascadeType.ALL)
     @OrderColumn
-    @JoinColumn(name = "id")
     private List<PostImage> image;
 
     @OneToMany(mappedBy = "postId", cascade = CascadeType.ALL)

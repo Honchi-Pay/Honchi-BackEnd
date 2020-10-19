@@ -24,13 +24,11 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.transaction.Transactional;
 import java.io.File;
 import java.nio.file.Files;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -76,27 +74,25 @@ public class PostServiceImpl implements PostService {
             for (MultipartFile file : postWriteRequest.getImages()) {
                 String imageName = UUID.randomUUID().toString();
 
-                postImageRepository.save(
+                file.transferTo(new File(imageDirPath, imageName));
+                postImages.add(
                         PostImage.builder()
                                 .postId(post.getId())
                                 .imageName(imageName)
                                 .build()
                 );
-
-                file.transferTo(new File(imageDirPath, imageName));
-                postImages.add(new PostImage(post.getId(), imageName));
             }
+            post.setImage(postImages);
+            postRepository.save(post);
         }
-
-        post.setImage(postImages);
-
-        postRepository.save(post);
     }
 
     @Override
     public List<PostListResponse> getList(PostListRequest postListRequest) {
         User user = userRepository.findByEmail(authenticationFacade.getUserEmail())
                 .orElseThrow(UserNotFoundException::new);
+
+        System.out.println(postListRequest.getLat() + "+" + postListRequest.getLon() + "+" + postListRequest.getDist());
 
         if (postListRequest.getLat() != 0.0 && postListRequest.getLon() != 0.0) {
             user.setLat(postListRequest.getLat());
@@ -209,7 +205,7 @@ public class PostServiceImpl implements PostService {
         Post post = postRepository.findById(postId)
                 .orElseThrow(PostNotFoundException::new);
 
-        if(!user.getId().equals(post.getUserId())) throw new UserNotSameException();
+        if (!user.getId().equals(post.getUserId())) throw new UserNotSameException();
 
         List<PostAttendListResponse> postAttendListResponses = new ArrayList<>();
 
@@ -266,6 +262,7 @@ public class PostServiceImpl implements PostService {
 
     @SneakyThrows
     @Override
+    @Transactional
     public void fixPost(Integer postId, PostFixRequest postFixRequest) {
         User user = userRepository.findByEmail(authenticationFacade.getUserEmail())
                 .orElseThrow(UserNotFoundException::new);
@@ -282,25 +279,29 @@ public class PostServiceImpl implements PostService {
 
         postRepository.save(post);
 
-        List<PostImage> postImages = postImageRepository.findAllByPostId(postId);
-
-        for (PostImage postImage : postImages) {
-            new File(imageDirPath, postImage.getImageName()).deleteOnExit();
+        for (PostImage postImage : postImageRepository.findByPostIdOrderById(postId)) {
+            Files.delete(new File(imageDirPath, postImage.getImageName()).toPath());
         }
 
-        postImageRepository.deleteById(postId);
+        postImageRepository.deleteByPostId(postId);
+
+        List<PostImage> postImages = new ArrayList<>();
 
         for (MultipartFile file : postFixRequest.getImages()) {
-            String fileName = UUID.randomUUID().toString();
-            postImageRepository.save(
+            String imageName = UUID.randomUUID().toString();
+
+            file.transferTo(new File(imageDirPath, imageName));
+
+            postImages.add(
                     PostImage.builder()
                             .postId(postId)
-                            .imageName(fileName)
+                            .imageName(imageName)
                             .build()
             );
-
-            file.transferTo(new File(imageDirPath, fileName));
         }
+        post.setImage(postImages);
+
+        postRepository.save(post);
     }
 
     @SneakyThrows
@@ -317,7 +318,7 @@ public class PostServiceImpl implements PostService {
         for (PostImage postImage : postImageRepository.findAllByPostId(postId)) {
             Files.delete(new File(imageDirPath, postImage.getImageName()).toPath());
         }
-
         postRepository.deleteById(postId);
+        postImageRepository.deleteByPostId(postId);
     }
 }
