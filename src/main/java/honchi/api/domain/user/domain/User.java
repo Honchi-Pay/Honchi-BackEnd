@@ -42,7 +42,10 @@ public class User {
     private List<Post> posts;
 
     @OneToMany(mappedBy = "userId", cascade = CascadeType.ALL)
-    private List<Star> stars;
+    private List<Star> user;
+
+    @OneToMany(mappedBy = "targetId", cascade = CascadeType.ALL)
+    private List<Star> target;
 
     @OneToMany(mappedBy = "userId", cascade = CascadeType.ALL)
     private List<PostAttend> postAttends;

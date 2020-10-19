@@ -15,7 +15,7 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping("/alone")
-    public void alone(@RequestBody @Valid String email) {
+    public void alone(@RequestParam("email") @Valid String email) {
         userService.alone(email);
     }
 
