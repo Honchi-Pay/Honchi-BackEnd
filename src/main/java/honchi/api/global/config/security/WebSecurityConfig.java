@@ -22,8 +22,14 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http
                 .csrf().disable()
                 .formLogin().disable()
+                .sessionManagement().disable()
                 .authorizeRequests()
-                    .anyRequest().permitAll()
+                    .antMatchers("/user/profile").authenticated()
+                    .antMatchers("/user/**").permitAll()
+                    .antMatchers("/auth").permitAll()
+                    .antMatchers("/email/**").permitAll()
+                    .antMatchers("/image/**").permitAll()
+                    .anyRequest().authenticated()
                 .and()
                     .apply(new JwtConfigurer(jwtTokenProvider));
     }
