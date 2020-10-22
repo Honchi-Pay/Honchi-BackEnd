@@ -49,7 +49,7 @@ public class EmailServiceImpl implements EmailService {
         EmailVerification emailVerification = verificationRepository.findById(email)
                 .orElseThrow(InvalidAuthEmailException::new);
 
-        if(!emailVerification.getCode().equals(code))
+        if (!emailVerification.getCode().equals(code))
             throw new InvalidAuthCodeException();
 
         verificationRepository.save(emailVerification.verify());

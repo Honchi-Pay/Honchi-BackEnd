@@ -26,4 +26,10 @@ public class SignUpRequest {
 
     @NotNull
     private Sex sex;
+
+    @NotNull
+    private Double lat;
+
+    @NotNull
+    private Double lon;
 }

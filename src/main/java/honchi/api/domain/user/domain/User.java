@@ -55,11 +55,20 @@ public class User {
     private Double lon;
 
     @Builder
-    public User(String email, String password, String nickName, String phoneNumber, Sex sex) {
+    public User(String email, String password, String nickName, String phoneNumber, Sex sex, double lat, double lon) {
         this.email = email;
         this.password = password;
         this.nickName = nickName;
         this.phoneNumber = phoneNumber;
         this.sex = sex;
+        this.lat = lat;
+        this.lon = lon;
+    }
+
+    public User updateDist(double lat, double lon) {
+        this.lat = lat;
+        this.lon = lon;
+
+        return this;
     }
 }

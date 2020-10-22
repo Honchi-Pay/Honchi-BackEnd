@@ -13,7 +13,6 @@ import honchi.api.domain.user.exception.*;
 import honchi.api.global.config.security.AuthenticationFacade;
 import honchi.api.global.error.exception.BadRequestException;
 import honchi.api.global.error.exception.UserNotFoundException;
-import honchi.api.global.error.exception.UserNotSameException;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Value;
@@ -74,6 +73,8 @@ public class UserServiceImpl implements UserService {
                         .nickName(signUpRequest.getNickName())
                         .phoneNumber(signUpRequest.getPhoneNumber())
                         .sex(signUpRequest.getSex())
+                        .lat(signUpRequest.getLat())
+                        .lon(signUpRequest.getLon())
                         .build()
         );
     }
@@ -82,6 +83,10 @@ public class UserServiceImpl implements UserService {
     public void findPassword(FindPasswordRequest findPasswordRequest) {
         String email = findPasswordRequest.getEmail();
         String password = passwordEncoder.encode(findPasswordRequest.getPassword());
+
+        verificationRepository.findById(email)
+                .filter(EmailVerification::isVerified)
+                .orElseThrow(InvalidAuthEmailException::new);
 
         User user = userRepository.findByEmail(email)
                 .orElseThrow(UserNotFoundException::new);
@@ -114,12 +119,11 @@ public class UserServiceImpl implements UserService {
 
         UserImage image = imageRepository.findByUserId(profile.getId());
 
-        Integer userId = profile.getId();
         double star = 0.0;
 
-        if(starRepository.findByTargetId(profile.getId()).isPresent()) {
-            star = (double) (Math.round((starRepository.sumStar(userId)/
-                    starRepository.countByTargetId(userId))*10)/10);
+        if (starRepository.findByTargetId(profile.getId()).isPresent()) {
+            star = (double) (Math.round((starRepository.sumStar(profile.getId()) /
+                    starRepository.countByTargetId(profile.getId())) * 10) / 10);
         }
 
         return ProfileResponse.builder()
@@ -128,7 +132,7 @@ public class UserServiceImpl implements UserService {
                 .sex(profile.getSex())
                 .star(star)
                 .image(image.getImageName())
-                .mine(user.getId().equals(userId))
+                .mine(user.equals(profile))
                 .build();
     }
 
@@ -142,10 +146,10 @@ public class UserServiceImpl implements UserService {
             throw new NickNameAlreadyExistException();
         });
 
-        if(profileUpdateRequest.getProfileImage() != null) {
+        if (profileUpdateRequest.getProfileImage() != null) {
             String imageName = UUID.randomUUID().toString();
 
-            if(user.getImage() != null) {
+            if (user.getImage() != null) {
                 UserImage profile = imageRepository.findByUserId(user.getId());
 
                 new File(imageDirPath, profile.getImageName()).delete();
@@ -154,7 +158,7 @@ public class UserServiceImpl implements UserService {
 
                 imageRepository.save(profile);
             } else {
-                imageRepository.save(
+                user.setImage(
                         UserImage.builder()
                                 .userId(user.getId())
                                 .imageName(imageName)
@@ -162,10 +166,6 @@ public class UserServiceImpl implements UserService {
                 );
             }
             profileUpdateRequest.getProfileImage().transferTo(new File(imageDirPath, imageName));
-
-            UserImage image = imageRepository.findByImageName(imageName);
-
-            user.setImage(image);
         }
 
         user.setNickName(profileUpdateRequest.getNickName());
@@ -179,41 +179,38 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findByEmail(authenticationFacade.getUserEmail())
                 .orElseThrow(UserNotFoundException::new);
 
-        User profile = userRepository.findById(starRequest.getTargetId())
+        userRepository.findById(starRequest.getTargetId())
                 .orElseThrow(UserNotFoundException::new);
 
-        if(user.equals(profile)) throw new UserSameException();
-
-        if(starRequest.getStar() > 5 || starRequest.getStar() < 1)
+        if (starRequest.getStar() > 5 || starRequest.getStar() < 1)
             throw new BadRequestException();
 
         Star star = new Star();
 
-        if(starRepository.findByTargetId(profile.getId()).isPresent()) {
-            star = starRepository.findByTargetId(profile.getId())
+        if (starRepository.findByTargetId(starRequest.getTargetId()).isPresent()) {
+            star = starRepository.findByTargetId(starRequest.getTargetId())
                     .orElseThrow(UserNotFoundException::new);
+
+            star.setStar(starRequest.getStar());
+
+            starRepository.save(star);
+        } else {
+            star.setStar(starRequest.getStar());
+
+            starRepository.save(
+                    Star.builder()
+                            .userId(user.getId())
+                            .targetId(starRequest.getTargetId())
+                            .star(star.getStar())
+                            .build());
         }
-
-        star.setStar(starRequest.getStar());
-
-        starRepository.save(
-                Star.builder()
-                .userId(user.getId())
-                .targetId(profile.getId())
-                .star(star.getStar())
-                .build());
     }
 
     @Override
     public void deleteUser(String nickName) {
-        User user = userRepository.findByEmail(authenticationFacade.getUserEmail())
+        userRepository.findByEmail(authenticationFacade.getUserEmail())
                 .orElseThrow(UserNotFoundException::new);
 
-        User profile = userRepository.findByNickName(nickName)
-                .orElseThrow(UserNotFoundException::new);
-
-        if(!user.equals(profile)) throw new UserNotSameException();
-
-        userRepository.deleteById(profile.getId());
+        userRepository.deleteByNickName(nickName);
     }
 }
