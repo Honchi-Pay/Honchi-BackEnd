@@ -18,7 +18,6 @@ public enum ErrorCode {
     UNAUTHORIZED(401, "Authentication is required and has failed or has not yet been provided."),
 
     USER_NOT_FOUND(404, "User Not Found"),
-    USER_NOT_SAME(404, "User Not Same"),
     POST_NOT_FOUND(404, "Post Not Found"),
 
     PASSWORD_SAME(409, "Password Same Before"),
