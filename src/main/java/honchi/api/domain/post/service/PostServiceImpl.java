@@ -14,10 +14,8 @@ import honchi.api.domain.user.domain.User;
 import honchi.api.domain.user.domain.UserImage;
 import honchi.api.domain.user.domain.repository.UserImageRepository;
 import honchi.api.domain.user.domain.repository.UserRepository;
-import honchi.api.domain.user.exception.UserSameException;
 import honchi.api.global.config.security.AuthenticationFacade;
 import honchi.api.global.error.exception.UserNotFoundException;
-import honchi.api.global.error.exception.UserNotSameException;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Value;
@@ -28,7 +26,10 @@ import javax.transaction.Transactional;
 import java.io.File;
 import java.nio.file.Files;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -82,8 +83,7 @@ public class PostServiceImpl implements PostService {
                                 .build()
                 );
             }
-            post.setImage(postImages);
-            postRepository.save(post);
+            postRepository.save(post.setImage(postImages));
         }
     }
 
@@ -92,14 +92,8 @@ public class PostServiceImpl implements PostService {
         User user = userRepository.findByEmail(authenticationFacade.getUserEmail())
                 .orElseThrow(UserNotFoundException::new);
 
-        System.out.println(postListRequest.getLat() + "+" + postListRequest.getLon() + "+" + postListRequest.getDist());
-
-        if (postListRequest.getLat() != 0.0 && postListRequest.getLon() != 0.0) {
-            user.setLat(postListRequest.getLat());
-            user.setLon(postListRequest.getLon());
-
-            userRepository.save(user);
-        }
+        if (postListRequest.getLat() != 0.0 && postListRequest.getLon() != 0.0)
+            userRepository.save(user.updateDist(postListRequest.getLat(), postListRequest.getLon()));
 
         List<PostListResponse> postListResponses = new ArrayList<>();
 
@@ -135,12 +129,8 @@ public class PostServiceImpl implements PostService {
         User user = userRepository.findByEmail(authenticationFacade.getUserEmail())
                 .orElseThrow(UserNotFoundException::new);
 
-        if (postSearchListRequest.getLat() != 0.0 && postSearchListRequest.getLon() != 0.0) {
-            user.setLat(postSearchListRequest.getLat());
-            user.setLon(postSearchListRequest.getLon());
-
-            userRepository.save(user);
-        }
+        if (postSearchListRequest.getLat() != 0.0 && postSearchListRequest.getLon() != 0.0)
+            userRepository.save(user.updateDist(postSearchListRequest.getLat(), postSearchListRequest.getLon()));
 
         List<PostListResponse> postListResponses = new ArrayList<>();
 
@@ -199,13 +189,11 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public List<PostAttendListResponse> getAttendList(Integer postId) {
-        User user = userRepository.findByEmail(authenticationFacade.getUserEmail())
+        userRepository.findByEmail(authenticationFacade.getUserEmail())
                 .orElseThrow(UserNotFoundException::new);
 
         Post post = postRepository.findById(postId)
                 .orElseThrow(PostNotFoundException::new);
-
-        if (!user.getId().equals(post.getUserId())) throw new UserNotSameException();
 
         List<PostAttendListResponse> postAttendListResponses = new ArrayList<>();
 
@@ -243,11 +231,6 @@ public class PostServiceImpl implements PostService {
         User user = userRepository.findByEmail(authenticationFacade.getUserEmail())
                 .orElseThrow(UserNotFoundException::new);
 
-        Post post = postRepository.findById(postId)
-                .orElseThrow(PostNotFoundException::new);
-
-        if (user.getId().equals(post.getUserId())) throw new UserSameException();
-
         if (postAttendRepository.findByPostIdAndUserId(postId, user.getId()).isPresent()) {
             postAttendRepository.deleteByPostIdAndUserId(postId, user.getId());
         } else {
@@ -264,20 +247,13 @@ public class PostServiceImpl implements PostService {
     @Override
     @Transactional
     public void fixPost(Integer postId, PostFixRequest postFixRequest) {
-        User user = userRepository.findByEmail(authenticationFacade.getUserEmail())
+        userRepository.findByEmail(authenticationFacade.getUserEmail())
                 .orElseThrow(UserNotFoundException::new);
 
         Post post = postRepository.findById(postId)
                 .orElseThrow(PostNotFoundException::new);
 
-        if (!user.getId().equals(post.getUserId())) throw new UserNotSameException();
-
-        post.setTitle(postFixRequest.getTitle());
-        post.setContent(postFixRequest.getContent());
-        post.setCategory(postFixRequest.getCategory());
-        post.setItem(postFixRequest.getItem());
-
-        postRepository.save(post);
+        postRepository.save(post.updateContent(postFixRequest));
 
         for (PostImage postImage : postImageRepository.findByPostIdOrderById(postId)) {
             Files.delete(new File(imageDirPath, postImage.getImageName()).toPath());
@@ -299,26 +275,22 @@ public class PostServiceImpl implements PostService {
                             .build()
             );
         }
-        post.setImage(postImages);
-
-        postRepository.save(post);
+        postRepository.save(post.setImage(postImages));
     }
 
     @SneakyThrows
     @Override
     public void deletePost(Integer postId) {
-        User user = userRepository.findByEmail(authenticationFacade.getUserEmail())
+        userRepository.findByEmail(authenticationFacade.getUserEmail())
                 .orElseThrow(UserNotFoundException::new);
 
-        Post post = postRepository.findById(postId)
+        postRepository.findById(postId)
                 .orElseThrow(PostNotFoundException::new);
-
-        if (!user.getId().equals(post.getUserId())) throw new UserNotSameException();
 
         for (PostImage postImage : postImageRepository.findAllByPostId(postId)) {
             Files.delete(new File(imageDirPath, postImage.getImageName()).toPath());
         }
+
         postRepository.deleteById(postId);
-        postImageRepository.deleteByPostId(postId);
     }
 }
