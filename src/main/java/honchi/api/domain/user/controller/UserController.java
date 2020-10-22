@@ -34,12 +34,12 @@ public class UserController {
         userService.changePassword(changePasswordRequest);
     }
 
-    @GetMapping
+    @GetMapping("/profile")
     public ProfileResponse getProfile(@RequestParam("nickName") @Valid String nickName) {
         return userService.getProfile(nickName);
     }
 
-    @PutMapping
+    @PutMapping("/profile")
     public void updateProfile(@ModelAttribute @Valid ProfileUpdateRequest profileUpdateRequest) {
         userService.updateProfile(profileUpdateRequest);
     }
@@ -50,7 +50,7 @@ public class UserController {
     }
 
 
-    @DeleteMapping
+    @DeleteMapping("/profile")
     public void deleteUser(@RequestParam("nickName") @Valid String nickName) {
         userService.deleteUser(nickName);
     }
