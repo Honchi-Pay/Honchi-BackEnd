@@ -2,6 +2,7 @@ package honchi.api.domain.post.domain;
 
 import honchi.api.domain.post.domain.enums.Category;
 import honchi.api.domain.post.domain.enums.Completion;
+import honchi.api.domain.post.dto.PostFixRequest;
 import lombok.*;
 
 import javax.persistence.*;
@@ -9,7 +10,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
-@Setter
 @Builder
 @Entity
 @AllArgsConstructor
@@ -54,4 +54,19 @@ public class Post {
     private Completion completion;
 
     private LocalDateTime completeAt;
+
+    public Post setImage(List<PostImage> postImages) {
+        this.image = postImages;
+
+        return this;
+    }
+
+    public Post updateContent(PostFixRequest postFixRequest) {
+        this.title = postFixRequest.getTitle();
+        this.content = postFixRequest.getContent();
+        this.category = postFixRequest.getCategory();
+        this.item = postFixRequest.getItem();
+
+        return this;
+    }
 }
