@@ -44,7 +44,7 @@ public class UserController {
         userService.updateProfile(profileUpdateRequest);
     }
 
-    @PostMapping("/star")
+    @PutMapping("/star")
     public void star(@RequestBody @Valid StarRequest starRequest) {
         userService.star(starRequest);
     }
