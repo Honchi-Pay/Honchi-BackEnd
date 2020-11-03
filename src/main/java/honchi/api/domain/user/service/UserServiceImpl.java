@@ -20,6 +20,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -131,7 +132,7 @@ public class UserServiceImpl implements UserService {
                 .nickName(nickName)
                 .sex(profile.getSex())
                 .star(star)
-                .image(image.getImageName())
+                .image(image == null ? null : image.getImageName())
                 .mine(user.equals(profile))
                 .build();
     }
@@ -187,9 +188,10 @@ public class UserServiceImpl implements UserService {
 
         Star star = new Star();
 
-        if (starRepository.findByTargetId(starRequest.getTargetId()).isPresent()) {
-            star = starRepository.findByTargetId(starRequest.getTargetId())
-                    .orElseThrow(UserNotFoundException::new);
+        Optional<Star> starRepo = starRepository.findByUserIdAndTargetId(user.getId(), starRequest.getTargetId());
+
+        if (starRepo.isPresent()) {
+            star = starRepo.get();
 
             star.setStar(starRequest.getStar());
 
