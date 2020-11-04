@@ -1,11 +1,9 @@
 package honchi.api.domain.chat.service;
 
 import honchi.api.domain.chat.domain.Chat;
+import honchi.api.domain.chat.domain.enums.Authority;
 import honchi.api.domain.chat.domain.repository.ChatRepository;
 import honchi.api.domain.chat.dto.ChatListResponse;
-import honchi.api.domain.post.domain.Post;
-import honchi.api.domain.post.domain.repository.PostRepository;
-import honchi.api.domain.post.exception.PostNotFoundException;
 import honchi.api.domain.user.domain.User;
 import honchi.api.domain.user.domain.repository.UserRepository;
 import honchi.api.global.config.security.AuthenticationFacade;
@@ -22,7 +20,6 @@ public class ChatServiceImpl implements ChatService {
 
     private final ChatRepository chatRepository;
     private final UserRepository userRepository;
-    private final PostRepository postRepository;
 
     private final AuthenticationFacade authenticationFacade;
 
@@ -34,13 +31,18 @@ public class ChatServiceImpl implements ChatService {
         List<ChatListResponse> chatListResponses = new ArrayList<>();
 
         for (Chat chat : chatRepository.findAllByUserId(user.getId())) {
-            Post post = postRepository.findById(chat.getPostId())
-                    .orElseThrow(PostNotFoundException::new);
+            String title = chat.getTitle();
+
+            if(title.equals("default")) {
+                title = chatRepository.findByRoomIdAndAuthority(chat.getRoomId(), Authority.LEADER).getTitle();
+                chatRepository.save(chat.updateTitle(title));
+            }
 
             chatListResponses.add(
                     ChatListResponse.builder()
                             .roomId(chat.getRoomId())
-                            .title(post.getTitle())
+                            .title(title)
+                            .people(chatRepository.countByRoomId(chat.getRoomId()))
                             .build()
             );
         }
