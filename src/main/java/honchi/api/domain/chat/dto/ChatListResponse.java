@@ -10,4 +10,6 @@ public class ChatListResponse {
     private String roomId;
 
     private String title;
+
+    private Integer people;
 }
