@@ -7,7 +7,7 @@ import lombok.Getter;
 @Builder
 public class PostAttendListResponse {
 
-    private String userName;
+    private String nickName;
 
     private String image;
 }
