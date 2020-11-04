@@ -195,16 +195,16 @@ public class PostServiceImpl implements PostService {
         Post post = postRepository.findById(postId)
                 .orElseThrow(PostNotFoundException::new);
 
-        List<PostAttendListResponse> postAttendListResponses = new ArrayList<>();
-
         User writer = userRepository.findById(post.getUserId())
                 .orElseThrow(UserNotFoundException::new);
+
+        List<PostAttendListResponse> postAttendListResponses = new ArrayList<>();
 
         UserImage userImage = userImageRepository.findByUserId(writer.getId());
 
         postAttendListResponses.add(
                 PostAttendListResponse.builder()
-                        .userName(writer.getNickName())
+                        .nickName(writer.getNickName())
                         .image(userImage.getImageName())
                         .build()
         );
@@ -217,8 +217,8 @@ public class PostServiceImpl implements PostService {
 
             postAttendListResponses.add(
                     PostAttendListResponse.builder()
-                            .userName(attender.getNickName())
-                            .image(profileImage.getImageName())
+                            .nickName(attender.getNickName())
+                            .image(profileImage == null ? null : profileImage.getImageName())
                             .build()
             );
         }
