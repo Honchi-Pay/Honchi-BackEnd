@@ -1,5 +1,6 @@
 package honchi.api.domain.user.domain;
 
+import honchi.api.domain.chat.domain.Chat;
 import honchi.api.domain.post.domain.Post;
 import honchi.api.domain.post.domain.PostAttend;
 import honchi.api.domain.user.domain.enums.Sex;
@@ -49,6 +50,9 @@ public class User {
 
     @OneToMany(mappedBy = "userId", cascade = CascadeType.ALL)
     private List<PostAttend> postAttends;
+
+    @OneToMany(mappedBy = "userId", cascade = CascadeType.ALL)
+    private List<Chat> chats;
 
     private Double lat;
 
