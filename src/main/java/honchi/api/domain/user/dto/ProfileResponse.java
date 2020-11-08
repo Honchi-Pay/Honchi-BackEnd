@@ -8,6 +8,8 @@ import lombok.Getter;
 @Builder
 public class ProfileResponse {
 
+    private Integer userId;
+
     private String email;
 
     private String nickName;

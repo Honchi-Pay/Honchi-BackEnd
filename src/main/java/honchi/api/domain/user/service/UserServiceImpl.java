@@ -128,6 +128,7 @@ public class UserServiceImpl implements UserService {
         }
 
         return ProfileResponse.builder()
+                .userId(profile.getId())
                 .email(profile.getEmail())
                 .nickName(nickName)
                 .sex(profile.getSex())
