@@ -2,7 +2,7 @@ package honchi.api.domain.message.service;
 
 import honchi.api.domain.message.domain.Message;
 import honchi.api.domain.message.domain.repository.MessageRepository;
-import honchi.api.domain.message.dto.MessageListRequest;
+import honchi.api.domain.message.dto.MessageRequest;
 import honchi.api.domain.message.dto.MessageResponse;
 import honchi.api.domain.user.domain.User;
 import honchi.api.domain.user.domain.repository.UserRepository;
@@ -24,13 +24,13 @@ public class MessageServiceImpl implements MessageService {
     private final AuthenticationFacade authenticationFacade;
 
     @Override
-    public List<MessageResponse> getList(MessageListRequest messageListRequest) {
+    public List<MessageResponse> getList(MessageRequest messageRequest) {
         userRepository.findByEmail(authenticationFacade.getUserEmail())
                 .orElseThrow(UserNotFoundException::new);
 
         List<MessageResponse> messages = new ArrayList<>();
 
-        for (Message message : messageRepository.findAllByRoomIdOrderByTimeDesc(messageListRequest.getRoomId())) {
+        for (Message message : messageRepository.findAllByRoomIdOrderByTimeDesc(messageRequest.getRoomId())) {
             User user = userRepository.findById(message.getId())
                     .orElseThrow(UserNotFoundException::new);
 
