@@ -1,6 +1,6 @@
 package honchi.api.domain.message.controller;
 
-import honchi.api.domain.message.dto.MessageListRequest;
+import honchi.api.domain.message.dto.MessageRequest;
 import honchi.api.domain.message.dto.MessageResponse;
 import honchi.api.domain.message.service.MessageService;
 import lombok.RequiredArgsConstructor;
@@ -20,7 +20,7 @@ public class MessageController {
     private final MessageService messageService;
 
     @GetMapping
-    public List<MessageResponse> getMessage(@RequestBody @Valid MessageListRequest messageListRequest) {
-        return messageService.getList(messageListRequest);
+    public List<MessageResponse> getMessage(@RequestBody @Valid MessageRequest messageRequest) {
+        return messageService.getList(messageRequest);
     }
 }
