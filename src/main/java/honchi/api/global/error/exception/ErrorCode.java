@@ -19,6 +19,7 @@ public enum ErrorCode {
 
     USER_NOT_FOUND(404, "User Not Found"),
     POST_NOT_FOUND(404, "Post Not Found"),
+    CHAT_NOT_FOUND(404, "Chat Not Found"),
 
     PASSWORD_SAME(409, "Password Same Before"),
     USER_DUPLICATION(409, "User is Already Exists"),
