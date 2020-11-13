@@ -4,8 +4,6 @@ import honchi.api.domain.chat.domain.Chat;
 import honchi.api.domain.chat.domain.enums.Authority;
 import honchi.api.domain.chat.domain.repository.ChatRepository;
 import honchi.api.domain.chat.dto.ChatListResponse;
-import honchi.api.domain.chat.dto.UpdateTitleRequest;
-import honchi.api.domain.chat.exception.ChatNotFoundException;
 import honchi.api.domain.user.domain.User;
 import honchi.api.domain.user.domain.repository.UserRepository;
 import honchi.api.global.config.security.AuthenticationFacade;
@@ -50,27 +48,5 @@ public class ChatServiceImpl implements ChatService {
         }
 
         return chatListResponses;
-    }
-
-    @Override
-    public void updateTitle(UpdateTitleRequest updateTitleRequest) {
-        userRepository.findByEmail(authenticationFacade.getUserEmail())
-                .orElseThrow(UserNotFoundException::new);
-
-        for (Chat chat : chatRepository.findAllByRoomId(updateTitleRequest.getRoomId())) {
-            chat.updateTitle(updateTitleRequest.getTitle());
-            chatRepository.save(chat);
-        }
-    }
-
-    @Override
-    public void exitChat(String roomId) {
-        User user = userRepository.findByEmail(authenticationFacade.getUserEmail())
-                .orElseThrow(UserNotFoundException::new);
-
-        chatRepository.findByRoomId(roomId)
-                .orElseThrow(ChatNotFoundException::new);
-
-        chatRepository.deleteByUserIdAndRoomId(user.getId(), roomId);
     }
 }
