@@ -11,8 +11,6 @@ import java.util.Optional;
 public interface PostAttendRepository extends CrudRepository<PostAttend, Integer> {
 
     Optional<PostAttend> findByPostIdAndUserId(Integer postId, Integer userId);
-
     List<PostAttend> findByPostId(Integer postId);
-
     void deleteByPostIdAndUserId(Integer postId, Integer userId);
 }
