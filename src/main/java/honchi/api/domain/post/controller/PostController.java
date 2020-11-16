@@ -41,6 +41,11 @@ public class PostController {
         return postService.getAttendList(postId);
     }
 
+    @GetMapping("/{postId}/chat")
+    public List<MakeChatResponse> makeChat(@PathVariable Integer postId) {
+        return postService.makeChat(postId);
+    }
+
     @GetMapping("/buyList")
     public List<BuyListResponse> getBuyList() {
         return postService.getBuyList();
