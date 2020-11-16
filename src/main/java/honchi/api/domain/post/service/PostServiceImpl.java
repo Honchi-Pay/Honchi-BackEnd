@@ -244,7 +244,7 @@ public class PostServiceImpl implements PostService {
                             .userId(user.getId())
                             .image(image == null ? null : image.getImageName())
                             .build()
-            )
+            );
         }
         return chatResponses;
     }
