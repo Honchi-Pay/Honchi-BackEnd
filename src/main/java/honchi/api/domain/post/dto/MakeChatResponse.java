@@ -5,5 +5,9 @@ import lombok.Getter;
 
 @Getter
 @Builder
-public class PostBuyListResponse {
+public class MakeChatResponse {
+
+    private Integer userId;
+
+    private String image;
 }

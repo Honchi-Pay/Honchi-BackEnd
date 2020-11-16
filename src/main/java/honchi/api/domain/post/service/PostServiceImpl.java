@@ -227,6 +227,36 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
+    public List<MakeChatResponse> makeChat(Integer postId) {
+        userRepository.findByEmail(authenticationFacade.getUserEmail())
+                .orElseThrow(UserNotFoundException::new);
+
+        List<MakeChatResponse> chatResponses = new ArrayList<>();
+
+        for (PostAttend postAttend : postAttendRepository.findByPostId(postId)) {
+            User user = userRepository.findById(postAttend.getUserId())
+                    .orElseThrow(UserNotFoundException::new);
+
+            UserImage image = userImageRepository.findByUserId(user.getId());
+
+            chatResponses.add(
+                    MakeChatResponse.builder()
+                            .userId(user.getId())
+                            .image(image == null ? null : image.getImageName())
+                            .build()
+            )
+        }
+        return chatResponses;
+    }
+
+    @Override
+    public List<BuyListResponse> getBuyList() {
+        User user = userRepository.findByEmail(authenticationFacade.getUserEmail())
+                .orElseThrow(UserNotFoundException::new);
+        return null;
+    }
+
+    @Override
     public void attendPost(Integer postId) {
         User user = userRepository.findByEmail(authenticationFacade.getUserEmail())
                 .orElseThrow(UserNotFoundException::new);

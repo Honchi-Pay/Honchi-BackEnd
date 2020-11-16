@@ -11,6 +11,8 @@ public interface PostService {
     List<PostListResponse> getSearch(PostSearchListRequest postSearchListRequest);
     PostContentResponse getContent(Integer postId);
     List<PostAttendListResponse> getAttendList(Integer postId);
+    List<MakeChatResponse> makeChat(Integer postId);
+    List<BuyListResponse> getBuyList();
     void attendPost(Integer postId);
     void fixPost(Integer postId, PostFixRequest postFixRequest);
     void deletePost(Integer postId);

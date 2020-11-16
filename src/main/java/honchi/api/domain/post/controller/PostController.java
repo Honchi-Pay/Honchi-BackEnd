@@ -20,14 +20,15 @@ public class PostController {
         postService.write(postWriteRequest);
     }
 
+
+    @PostMapping("/search")
+    public List<PostListResponse> getSearch(@RequestBody @Valid PostSearchListRequest postSearchListRequest) {
+        return postService.getSearch(postSearchListRequest);
+    }
+
     @GetMapping
     public List<PostListResponse> getList(@RequestBody @Valid PostListRequest postListRequest) {
         return postService.getList(postListRequest);
-    }
-
-    @GetMapping("/search")
-    public List<PostListResponse> getSearch(@RequestBody @Valid PostSearchListRequest postSearchListRequest) {
-        return postService.getSearch(postSearchListRequest);
     }
 
     @GetMapping("/{postId}")
@@ -35,9 +36,19 @@ public class PostController {
         return postService.getContent(postId);
     }
 
-    @GetMapping("/{postId}/attendList")
+    @GetMapping("/{postId}/attend")
     public List<PostAttendListResponse> getAttendList(@PathVariable Integer postId) {
         return postService.getAttendList(postId);
+    }
+
+    @GetMapping("/{postId}/chat")
+    public List<MakeChatResponse> makeChat(@PathVariable Integer postId) {
+        return postService.makeChat(postId);
+    }
+
+    @GetMapping("/buyList")
+    public List<BuyListResponse> getBuyList() {
+        return postService.getBuyList();
     }
 
     @PutMapping("/{postId}/attend")
