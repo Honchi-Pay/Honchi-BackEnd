@@ -20,6 +20,9 @@ public class Chat {
     private Integer id;
 
     @Column(nullable = false)
+    private Integer postId;
+
+    @Column(nullable = false)
     private String roomId;
 
     @Column(nullable = false)
