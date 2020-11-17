@@ -20,15 +20,14 @@ public class PostController {
         postService.write(postWriteRequest);
     }
 
-
-    @PostMapping("/search")
-    public List<PostListResponse> getSearch(@RequestBody @Valid PostSearchListRequest postSearchListRequest) {
-        return postService.getSearch(postSearchListRequest);
+    @GetMapping
+    public List<PostListResponse> getList(@Valid PostListRequest postListRequest) {
+        return postService.getList(postListRequest);
     }
 
-    @GetMapping
-    public List<PostListResponse> getList(@RequestBody @Valid PostListRequest postListRequest) {
-        return postService.getList(postListRequest);
+    @GetMapping("/search")
+    public List<PostListResponse> getSearch(@Valid PostSearchListRequest postSearchListRequest) {
+        return postService.getSearch(postSearchListRequest);
     }
 
     @GetMapping("/{postId}")
