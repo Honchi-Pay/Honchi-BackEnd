@@ -253,6 +253,14 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
+    public void updatePoint(UpdatePointRequest updatePointRequest) {
+        User user = userRepository.findByEmail(authenticationFacade.getUserEmail())
+                .orElseThrow(UserNotFoundException::new);
+
+        userRepository.save(user.updatePoint(updatePointRequest));
+    }
+
+    @Override
     public void attendPost(Integer postId) {
         User user = userRepository.findByEmail(authenticationFacade.getUserEmail())
                 .orElseThrow(UserNotFoundException::new);
