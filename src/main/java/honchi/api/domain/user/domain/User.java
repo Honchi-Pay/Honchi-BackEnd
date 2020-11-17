@@ -70,7 +70,7 @@ public class User {
         this.lon = lon;
     }
 
-    public User updateDist(UpdatePointRequest updatePointRequest) {
+    public User updatePoint(UpdatePointRequest updatePointRequest) {
         this.lat = updatePointRequest.getLat();
         this.lon = updatePointRequest.getLon();
 
