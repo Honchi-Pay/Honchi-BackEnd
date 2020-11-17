@@ -8,7 +8,7 @@ public interface PostService {
 
     void write(PostWriteRequest postWriteRequest);
     List<PostListResponse> getList(PostListRequest postListRequest);
-    List<PostListResponse> getSearch(PostSearchListRequest postSearchListRequest);
+    List<PostListResponse> searchPost(PostSearchListRequest postSearchListRequest);
     PostContentResponse getContent(Integer postId);
     List<PostAttendListResponse> getAttendList(Integer postId);
     List<MakeChatResponse> makeChat(Integer postId);
