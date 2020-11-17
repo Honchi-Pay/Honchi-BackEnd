@@ -92,13 +92,12 @@ public class PostServiceImpl implements PostService {
         User user = userRepository.findByEmail(authenticationFacade.getUserEmail())
                 .orElseThrow(UserNotFoundException::new);
 
-        if (postListRequest.getLat() != 0.0 && postListRequest.getLon() != 0.0)
-            userRepository.save(user.updateDist(postListRequest.getLat(), postListRequest.getLon()));
-
         List<PostListResponse> postListResponses = new ArrayList<>();
 
-        for (Post posts : postRepository.findAllByCompletionAndCreatedAtAfter(
-                Completion.UNCOMPLETION, LocalDateTime.now().minusMonths(1))) {
+        for (Post posts : postRepository.findAllByCompletionAndCreatedAtAfterAndCategoryAndItem(
+                Completion.UNCOMPLETION, LocalDateTime.now().minusMonths(1),
+                postListRequest.getCategory(), postListRequest.getItem())) {
+
             Optional<Post> list = postRepository.findByIdAndLatAndLon(posts.getId(), posts.getLat(),
                     posts.getLon(), user.getLat(), user.getLon(), postListRequest.getDist());
 
@@ -128,9 +127,6 @@ public class PostServiceImpl implements PostService {
     public List<PostListResponse> getSearch(PostSearchListRequest postSearchListRequest) {
         User user = userRepository.findByEmail(authenticationFacade.getUserEmail())
                 .orElseThrow(UserNotFoundException::new);
-
-        if (postSearchListRequest.getLat() != 0.0 && postSearchListRequest.getLon() != 0.0)
-            userRepository.save(user.updateDist(postSearchListRequest.getLat(), postSearchListRequest.getLon()));
 
         List<PostListResponse> postListResponses = new ArrayList<>();
 
