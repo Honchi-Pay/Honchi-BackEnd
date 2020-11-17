@@ -26,8 +26,8 @@ public class PostController {
     }
 
     @GetMapping("/search")
-    public List<PostListResponse> getSearch(@Valid PostSearchListRequest postSearchListRequest) {
-        return postService.getSearch(postSearchListRequest);
+    public List<PostListResponse> searchPost(@Valid PostSearchListRequest postSearchListRequest) {
+        return postService.searchPost(postSearchListRequest);
     }
 
     @GetMapping("/{postId}")

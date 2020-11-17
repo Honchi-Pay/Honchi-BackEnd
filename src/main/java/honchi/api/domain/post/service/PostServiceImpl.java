@@ -124,7 +124,7 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public List<PostListResponse> getSearch(PostSearchListRequest postSearchListRequest) {
+    public List<PostListResponse> searchPost(PostSearchListRequest postSearchListRequest) {
         User user = userRepository.findByEmail(authenticationFacade.getUserEmail())
                 .orElseThrow(UserNotFoundException::new);
 
