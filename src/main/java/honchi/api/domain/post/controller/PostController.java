@@ -50,6 +50,11 @@ public class PostController {
         return postService.getBuyList();
     }
 
+    @PutMapping("/point")
+    public void updatePoint(@RequestBody @Valid UpdatePointRequest updatePointRequest) {
+        postService.updatePoint(updatePointRequest);
+    }
+
     @PutMapping("/{postId}/attend")
     public void attendPost(@PathVariable Integer postId) {
         postService.attendPost(postId);
