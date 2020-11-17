@@ -1,16 +1,22 @@
 package honchi.api.domain.post.dto;
 
+import honchi.api.domain.post.domain.enums.Category;
 import lombok.Getter;
+import lombok.Setter;
 
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 @Getter
+@Setter
 public class PostListRequest {
 
-    private double lon;
+    @NotNull
+    private Category category;
 
-    private double lat;
+    @NotBlank
+    private String item;
 
     @NotNull
-    private int dist;
+    private Integer dist;
 }

@@ -1,6 +1,7 @@
 package honchi.api.domain.post.domain.repository;
 
 import honchi.api.domain.post.domain.Post;
+import honchi.api.domain.post.domain.enums.Category;
 import honchi.api.domain.post.domain.enums.Completion;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -14,7 +15,8 @@ import java.util.Optional;
 @Repository
 public interface PostRepository extends JpaRepository<Post, Integer> {
 
-    List<Post> findAllByCompletionAndCreatedAtAfter(Completion completion, LocalDateTime localDateTime);
+    List<Post> findAllByCompletionAndCreatedAtAfterAndCategoryAndItem(
+            Completion completion, LocalDateTime localDateTime, Category category, String item);
 
     void deleteById(Integer postId);
 
