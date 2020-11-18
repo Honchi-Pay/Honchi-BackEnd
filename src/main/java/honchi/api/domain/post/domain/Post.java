@@ -53,8 +53,6 @@ public class Post {
     @Enumerated(EnumType.STRING)
     private Completion completion;
 
-    private LocalDateTime completeAt;
-
     public Post setImage(List<PostImage> postImages) {
         this.image = postImages;
 
