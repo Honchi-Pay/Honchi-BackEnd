@@ -5,7 +5,6 @@ import honchi.api.domain.message.domain.Message;
 import lombok.*;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
@@ -36,8 +35,6 @@ public class Chat {
 
     @OneToMany(mappedBy = "roomId", cascade = CascadeType.ALL)
     private List<Message> messages;
-
-    private LocalDateTime time;
 
     public Chat updateTitle(String title) {
         this.title = title;
