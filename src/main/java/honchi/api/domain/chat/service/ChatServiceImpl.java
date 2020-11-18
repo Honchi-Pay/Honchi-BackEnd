@@ -6,7 +6,11 @@ import honchi.api.domain.chat.domain.repository.ChatRepository;
 import honchi.api.domain.chat.dto.ChatListResponse;
 import honchi.api.domain.chat.dto.UpdateTitleRequest;
 import honchi.api.domain.chat.exception.ChatNotFoundException;
+import honchi.api.domain.post.domain.PostAttend;
+import honchi.api.domain.post.domain.repository.PostAttendRepository;
 import honchi.api.domain.user.domain.User;
+import honchi.api.domain.user.domain.UserImage;
+import honchi.api.domain.user.domain.repository.UserImageRepository;
 import honchi.api.domain.user.domain.repository.UserRepository;
 import honchi.api.global.config.security.AuthenticationFacade;
 import honchi.api.global.error.exception.UserNotFoundException;
@@ -22,6 +26,8 @@ public class ChatServiceImpl implements ChatService {
 
     private final ChatRepository chatRepository;
     private final UserRepository userRepository;
+    private final UserImageRepository userImageRepository;
+    private final PostAttendRepository postAttendRepository;
 
     private final AuthenticationFacade authenticationFacade;
 
@@ -40,11 +46,26 @@ public class ChatServiceImpl implements ChatService {
                 chatRepository.save(chat.updateTitle(title));
             }
 
+            List<String> images = new ArrayList<>();
+
+            for (PostAttend postAttend : postAttendRepository.findByPostId(chat.getPostId())) {
+                UserImage userImage = userImageRepository.findByUserId(postAttend.getUserId());
+
+                if(userImage.getUserId().equals(user.getId())) continue;
+
+                images.add(userImage == null ? null : userImage.getImageName());
+
+                if(images.size() == 4) break;
+            }
+
+            String[] imageArray = images.stream().toArray(String[]::new);
+
             chatListResponses.add(
                     ChatListResponse.builder()
                             .roomId(chat.getRoomId())
                             .title(title)
                             .people(chatRepository.countByRoomId(chat.getRoomId()))
+                            .images(imageArray)
                             .build()
             );
         }
@@ -58,8 +79,7 @@ public class ChatServiceImpl implements ChatService {
                 .orElseThrow(UserNotFoundException::new);
 
         for (Chat chat : chatRepository.findAllByRoomId(updateTitleRequest.getRoomId())) {
-            chat.updateTitle(updateTitleRequest.getTitle());
-            chatRepository.save(chat);
+            chatRepository.save(chat.updateTitle(updateTitleRequest.getTitle()));
         }
     }
 
