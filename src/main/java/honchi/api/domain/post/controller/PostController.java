@@ -22,7 +22,7 @@ public class PostController {
     }
 
     @GetMapping("/recent")
-    public List<PostRecentResponse> getRecent(@Valid Category category) {
+    public List<RecentPostListResponse> getRecent(@Valid Category category) {
         return postService.getRecentList(category);
     }
 
