@@ -1,5 +1,6 @@
 package honchi.api.domain.post.controller;
 
+import honchi.api.domain.post.domain.enums.Category;
 import honchi.api.domain.post.dto.*;
 import honchi.api.domain.post.service.PostService;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +19,11 @@ public class PostController {
     @PostMapping
     public void write(@ModelAttribute @Valid PostWriteRequest postWriteRequest) {
         postService.write(postWriteRequest);
+    }
+
+    @GetMapping("/recent")
+    public List<RecentPostListResponse> getRecent(@Valid Category category) {
+        return postService.getRecentList(category);
     }
 
     @GetMapping

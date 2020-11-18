@@ -88,6 +88,37 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
+    public List<RecentPostListResponse> getRecentList(Category category) {
+        userRepository.findByEmail(authenticationFacade.getUserEmail())
+                .orElseThrow(UserNotFoundException::new);
+
+        List<RecentPostListResponse> postRecentResponses = new ArrayList<>();
+
+        for (Post post : postRepository.findAllByCompletionAndCategoryAndCreatedAtAfter(
+                Completion.UNCOMPLETION, category, LocalDateTime.now().minusHours(2))) {
+            User writer = userRepository.findById(post.getUserId())
+                    .orElseThrow(UserNotFoundException::new);
+
+            PostImage postImage = postImageRepository.findTop1ByPostId(post.getId());
+
+            postRecentResponses.add(
+                    RecentPostListResponse.builder()
+                            .postId(post.getId())
+                            .title(post.getTitle())
+                            .writer(writer.getNickName())
+                            .item(post.getItem())
+                            .lat(post.getLat())
+                            .lon(post.getLon())
+                            .createdAt(post.getCreatedAt())
+                            .image(postImage == null ? null : postImage.getImageName())
+                            .build()
+            );
+        }
+
+        return postRecentResponses;
+    }
+
+    @Override
     public List<PostListResponse> getList(PostListRequest postListRequest) {
         User user = userRepository.findByEmail(authenticationFacade.getUserEmail())
                 .orElseThrow(UserNotFoundException::new);
