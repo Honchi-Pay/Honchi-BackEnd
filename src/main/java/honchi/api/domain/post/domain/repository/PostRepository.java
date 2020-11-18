@@ -15,12 +15,10 @@ import java.util.Optional;
 @Repository
 public interface PostRepository extends JpaRepository<Post, Integer> {
 
-    List<Post> findAllByCompletionAndCreatedAtAfterAndCategoryAndItem(
-            Completion completion, LocalDateTime localDateTime, Category category, String item);
-
-    void deleteById(Integer postId);
-
+    List<Post> findAllByCompletionAndCreatedAtAfterAndCategoryAndItem(Completion completion, LocalDateTime localDateTime, Category category, String item);
     List<Post> findAllByTitleContainsAndCompletionAndCreatedAtAfter(String title, Completion completion, LocalDateTime localDateTime);
+    List<Post> findAllByCompletionAndCategoryAndCreatedAtAfter(Completion completion, Category category, LocalDateTime createdAt);
+    void deleteById(Integer postId);
 
     @Query(value = " select * from post" +
             " where id = :postId and (6371 * acos(cos(radians(:userLat)) * cos(radians(:lat)) * cos(radians(:lon) - " +
