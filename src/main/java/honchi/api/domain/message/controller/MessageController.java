@@ -1,13 +1,11 @@
 package honchi.api.domain.message.controller;
 
+import honchi.api.domain.message.dto.ImageRequest;
 import honchi.api.domain.message.dto.MessageRequest;
 import honchi.api.domain.message.dto.MessageResponse;
 import honchi.api.domain.message.service.MessageService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -18,6 +16,11 @@ import java.util.List;
 public class MessageController {
 
     private final MessageService messageService;
+
+    @PostMapping
+    public void sendImage(@ModelAttribute @Valid ImageRequest imageRequest) {
+        messageService.sendImage(imageRequest);
+    }
 
     @GetMapping
     public List<MessageResponse> getMessage(@RequestBody @Valid MessageRequest messageRequest) {
