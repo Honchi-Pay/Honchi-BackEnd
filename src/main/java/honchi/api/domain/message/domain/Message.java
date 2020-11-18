@@ -19,7 +19,7 @@ public class Message {
 
     private Integer userId;
 
-    private String roomId;
+    private Integer chatId;
 
     private String message;
 
