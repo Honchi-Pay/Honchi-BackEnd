@@ -26,7 +26,7 @@ public class ChatController {
         chatService.updateTitle(updateTitleRequest);
     }
 
-    @DeleteMapping("/{roomId}")
+    @DeleteMapping ("/{roomId}")
     public void exitChat(@PathVariable @Valid String roomId) {
         chatService.exitChat(roomId);
     }
