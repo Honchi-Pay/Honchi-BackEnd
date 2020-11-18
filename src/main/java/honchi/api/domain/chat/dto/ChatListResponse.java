@@ -12,4 +12,6 @@ public class ChatListResponse {
     private String title;
 
     private Integer people;
+
+    private String[] images;
 }
