@@ -9,5 +9,5 @@ import java.util.List;
 @Repository
 public interface MessageRepository extends CrudRepository<Message, Integer> {
 
-    List<Message> findAllByRoomIdOrderByTimeDesc(String roomId);
+    List<Message> findAllByChatIdOrderByTimeDesc(Integer chatId);
 }
