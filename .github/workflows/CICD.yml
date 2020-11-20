@@ -42,4 +42,4 @@ jobs:
         run: |
           aws s3 cp \
           --region ap-northeast-2 \
-	./springboot-intro-build.zip s3://springboot-intro-build/
+./springboot-intro-build.zip s3://springboot-intro-build/
