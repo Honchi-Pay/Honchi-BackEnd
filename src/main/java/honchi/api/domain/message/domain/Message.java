@@ -19,15 +19,15 @@ public class Message {
 
     private Integer userId;
 
-    private Integer chatId;
+    private String roomId;
 
     private String message;
 
     private MessageType messageType;
 
-    private LocalDateTime time;
+    private Integer readCount;
 
-    private boolean isShow;
+    private LocalDateTime time;
 
     private boolean isDelete;
 }
