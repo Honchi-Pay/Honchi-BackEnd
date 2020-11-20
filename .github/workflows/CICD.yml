@@ -24,3 +24,13 @@ jobs:
       run: chmod +x gradlew
     - name: Build with Gradle
       run: ./gradlew build
+      
+    - name: Create Docker Image
+      run: docker build --tag honchi .
+
+    - name: Upload to Registry
+      uses: elgohr/Publish-Docker-Github-Action@master
+      with:
+        name: hanif610/honchi
+        username: ${{ secrets.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_PASSWORD }}      
