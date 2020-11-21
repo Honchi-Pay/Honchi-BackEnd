@@ -74,7 +74,7 @@ public class ChatServiceImpl implements ChatService {
     }
 
     @Override
-    public void updateTitle(UpdateTitleRequest updateTitleRequest) {
+    public void updateTitle(String roomId, UpdateTitleRequest updateTitleRequest) {
         userRepository.findByEmail(authenticationFacade.getUserEmail())
                 .orElseThrow(UserNotFoundException::new);
 

@@ -8,6 +8,6 @@ import java.util.List;
 public interface ChatService {
 
     List<ChatListResponse> getChat();
-    void updateTitle(UpdateTitleRequest updateTitleRequest);
+    void updateTitle(String roomId, UpdateTitleRequest updateTitleRequest);
     void exitChat(String roomId);
 }
