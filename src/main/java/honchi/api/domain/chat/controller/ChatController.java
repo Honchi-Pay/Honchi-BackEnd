@@ -21,12 +21,13 @@ public class ChatController {
         return chatService.getChat();
     }
 
-    @PutMapping
-    public void updateTitle(@RequestBody @Valid UpdateTitleRequest updateTitleRequest) {
-        chatService.updateTitle(updateTitleRequest);
+    @PutMapping("{/roomId}")
+    public void updateTitle(@PathVariable @Valid String roomId,
+                            @RequestBody @Valid UpdateTitleRequest updateTitleRequest) {
+        chatService.updateTitle(roomId, updateTitleRequest);
     }
 
-    @DeleteMapping ("/{roomId}")
+    @DeleteMapping("/{roomId}")
     public void exitChat(@PathVariable @Valid String roomId) {
         chatService.exitChat(roomId);
     }
