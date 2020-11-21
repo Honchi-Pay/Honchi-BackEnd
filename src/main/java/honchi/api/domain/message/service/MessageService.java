@@ -10,4 +10,5 @@ public interface MessageService {
 
     void sendImage(ImageRequest imageRequest);
     List<MessageResponse> getList(MessageRequest messageListRequest);
+    void readMessage();
 }

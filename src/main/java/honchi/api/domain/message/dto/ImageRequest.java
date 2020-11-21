@@ -8,7 +8,7 @@ import org.springframework.web.multipart.MultipartFile;
 @Setter
 public class ImageRequest {
 
-    private Integer chatId;
+    private String roomId;
 
     private MultipartFile image;
 }

@@ -15,6 +15,8 @@ public class MessageResponse {
 
     private String message;
 
+    private Integer readCount;
+
     private LocalDateTime time;
 
     private boolean isMine;
