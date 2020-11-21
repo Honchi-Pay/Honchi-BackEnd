@@ -33,6 +33,8 @@ public class Chat {
     @Enumerated(EnumType.STRING)
     private Authority authority;
 
+    private Integer readPoint;
+
     @OneToMany(mappedBy = "roomId", cascade = CascadeType.ALL)
     private List<Message> messages;
 
