@@ -18,4 +18,6 @@ public class MessageResponse {
     private LocalDateTime time;
 
     private boolean isMine;
+
+    private boolean isDelete;
 }
