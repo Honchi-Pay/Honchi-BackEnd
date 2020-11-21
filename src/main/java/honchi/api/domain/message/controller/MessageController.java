@@ -25,7 +25,8 @@ public class MessageController {
     public List<MessageResponse> getMessage(@PathVariable @Valid String roomId) {
         return messageService.getList(roomId);
     }
-    @GetMapping("/read")
+
+    @PutMapping("/read")
     public void readMessage() {
         messageService.readMessage();
     }
