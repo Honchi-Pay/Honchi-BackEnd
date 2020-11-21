@@ -1,7 +1,6 @@
 package honchi.api.domain.message.controller;
 
 import honchi.api.domain.message.dto.ImageRequest;
-import honchi.api.domain.message.dto.MessageRequest;
 import honchi.api.domain.message.dto.MessageResponse;
 import honchi.api.domain.message.service.MessageService;
 import lombok.RequiredArgsConstructor;
