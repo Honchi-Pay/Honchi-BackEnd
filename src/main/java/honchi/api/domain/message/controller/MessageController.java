@@ -22,9 +22,9 @@ public class MessageController {
         messageService.sendImage(imageRequest);
     }
 
-    @GetMapping
-    public List<MessageResponse> getMessage(@RequestBody @Valid MessageRequest messageRequest) {
-        return messageService.getList(messageRequest);
+    @GetMapping("/{roomId}")
+    public List<MessageResponse> getMessage(@PathVariable @Valid String roomId) {
+        return messageService.getList(roomId);
     }
     @GetMapping("/read")
     public void readMessage() {
