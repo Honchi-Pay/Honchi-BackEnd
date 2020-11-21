@@ -26,4 +26,8 @@ public class MessageController {
     public List<MessageResponse> getMessage(@RequestBody @Valid MessageRequest messageRequest) {
         return messageService.getList(messageRequest);
     }
+    @GetMapping("/read")
+    public void readMessage() {
+        messageService.readMessage();
+    }
 }
