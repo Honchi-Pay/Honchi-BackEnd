@@ -111,6 +111,7 @@ public class PostServiceImpl implements PostService {
                             .lon(post.getLon())
                             .createdAt(post.getCreatedAt())
                             .image(postImage == null ? null : postImage.getImageName())
+                            .image(postImage.getImageName())
                             .build()
             );
         }
@@ -144,6 +145,9 @@ public class PostServiceImpl implements PostService {
                                 .title(post.getTitle())
                                 .writer(writer.getNickName())
                                 .image(postImage != null ? postImage.getImageName() : null)
+                                .lat(post.getLat())
+                                .lon(post.getLon())
+                                .image(postImage.getImageName())
                                 .createdAt(post.getCreatedAt())
                                 .build()
                 );
@@ -178,6 +182,9 @@ public class PostServiceImpl implements PostService {
                                 .title(list.getTitle())
                                 .writer(writer.getNickName())
                                 .image(postImage != null ? postImage.getImageName() : null)
+                                .lat(list.getLat())
+                                .lon(list.getLon())
+                                .image(postImage.getImageName())
                                 .createdAt(list.getCreatedAt())
                                 .build()
                 );
@@ -207,6 +214,8 @@ public class PostServiceImpl implements PostService {
                 .title(post.getTitle())
                 .content(post.getContent())
                 .writer(writer.getNickName())
+                .lat(post.getLat())
+                .lon(post.getLon())
                 .images(postImages)
                 .createdAt(post.getCreatedAt())
                 .isMine(writer.equals(user))

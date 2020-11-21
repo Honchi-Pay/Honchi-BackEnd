@@ -30,5 +30,6 @@ public class PostWriteRequest {
     @NotNull
     private Double lon;
 
+    @NotNull
     private MultipartFile[] images;
 }

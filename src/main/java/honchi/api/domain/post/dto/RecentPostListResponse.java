@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 
 @Getter
 @Builder
-public class PostRecentResponse {
+public class RecentPostListResponse {
 
     private Integer postId;
 
