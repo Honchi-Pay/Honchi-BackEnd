@@ -20,6 +20,10 @@ public class PostContentResponse {
 
     private LocalDateTime createdAt;
 
+    private Double lat;
+
+    private Double lon;
+
     private boolean isMine;
 
     private boolean isAttend;

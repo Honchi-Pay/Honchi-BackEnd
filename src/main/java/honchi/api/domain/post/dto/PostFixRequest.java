@@ -24,5 +24,6 @@ public class PostFixRequest {
     @NotBlank
     private String item;
 
+    @NotNull
     private MultipartFile[] images;
 }

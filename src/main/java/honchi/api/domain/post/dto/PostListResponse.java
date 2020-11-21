@@ -15,6 +15,10 @@ public class PostListResponse {
 
     private String writer;
 
+    private Double lat;
+
+    private Double lon;
+
     private String image;
 
     private LocalDateTime createdAt;
