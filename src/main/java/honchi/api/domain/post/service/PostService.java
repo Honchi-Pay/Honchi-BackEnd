@@ -14,7 +14,6 @@ public interface PostService {
     PostContentResponse getContent(Integer postId);
     List<PostAttendListResponse> getAttendList(Integer postId);
     List<MakeChatResponse> makeChat(Integer postId);
-    List<BuyListResponse> getBuyList();
     void updatePoint(UpdatePointRequest updatePointRequest);
     void attendPost(Integer postId);
     void fixPost(Integer postId, PostFixRequest postFixRequest);
