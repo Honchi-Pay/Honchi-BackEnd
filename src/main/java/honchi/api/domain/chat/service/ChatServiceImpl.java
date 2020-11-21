@@ -6,6 +6,8 @@ import honchi.api.domain.chat.domain.repository.ChatRepository;
 import honchi.api.domain.chat.dto.ChatListResponse;
 import honchi.api.domain.chat.dto.UpdateTitleRequest;
 import honchi.api.domain.chat.exception.ChatNotFoundException;
+import honchi.api.domain.message.domain.Message;
+import honchi.api.domain.message.domain.repository.MessageRepository;
 import honchi.api.domain.post.domain.PostAttend;
 import honchi.api.domain.post.domain.repository.PostAttendRepository;
 import honchi.api.domain.user.domain.User;
@@ -28,6 +30,8 @@ public class ChatServiceImpl implements ChatService {
     private final UserRepository userRepository;
     private final UserImageRepository userImageRepository;
     private final PostAttendRepository postAttendRepository;
+
+    private final MessageRepository messageRepository;
 
     private final AuthenticationFacade authenticationFacade;
 
@@ -60,11 +64,14 @@ public class ChatServiceImpl implements ChatService {
 
             String[] imageArray = images.stream().toArray(String[]::new);
 
+            Message message = messageRepository.findTop1ByRoomIdOrderByTimeDesc(chat.getRoomId());
+
             chatListResponses.add(
                     ChatListResponse.builder()
                             .roomId(chat.getRoomId())
                             .title(title)
                             .people(chatRepository.countByRoomId(chat.getRoomId()))
+                            .message(message.getMessage())
                             .images(imageArray)
                             .build()
             );
