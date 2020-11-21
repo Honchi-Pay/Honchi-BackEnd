@@ -51,11 +51,6 @@ public class PostController {
         return postService.makeChat(postId);
     }
 
-    @GetMapping("/buyList")
-    public List<BuyListResponse> getBuyList() {
-        return postService.getBuyList();
-    }
-
     @PutMapping("/point")
     public void updatePoint(@RequestBody @Valid UpdatePointRequest updatePointRequest) {
         postService.updatePoint(updatePointRequest);

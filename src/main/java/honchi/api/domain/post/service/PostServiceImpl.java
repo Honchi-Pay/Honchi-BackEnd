@@ -286,13 +286,6 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public List<BuyListResponse> getBuyList() {
-        User user = userRepository.findByEmail(authenticationFacade.getUserEmail())
-                .orElseThrow(UserNotFoundException::new);
-        return null;
-    }
-
-    @Override
     public void updatePoint(UpdatePointRequest updatePointRequest) {
         User user = userRepository.findByEmail(authenticationFacade.getUserEmail())
                 .orElseThrow(UserNotFoundException::new);
