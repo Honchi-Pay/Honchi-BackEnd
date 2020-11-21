@@ -80,6 +80,34 @@ public class UserServiceImpl implements UserService {
         );
     }
 
+    @SneakyThrows
+    @Override
+    public ProfileResponse getProfile(String nickName) {
+        User profile = userRepository.findByNickName(nickName).orElseThrow(UserNotFoundException::new);
+
+        User user = userRepository.findByEmail(authenticationFacade.getUserEmail())
+                .orElseThrow(UserNotFoundException::new);
+
+        UserImage image = imageRepository.findByUserId(profile.getId());
+
+        double star = 0.0;
+
+        if (starRepository.findByTargetId(profile.getId()).isPresent()) {
+            star = (double) (Math.round((starRepository.sumStar(profile.getId()) /
+                    starRepository.countByTargetId(profile.getId())) * 10) / 10);
+        }
+
+        return ProfileResponse.builder()
+                .userId(profile.getId())
+                .email(profile.getEmail())
+                .nickName(nickName)
+                .sex(profile.getSex())
+                .star(star)
+                .image(image == null ? null : image.getImageName())
+                .mine(user.equals(profile))
+                .build();
+    }
+
     @Override
     public void findPassword(FindPasswordRequest findPasswordRequest) {
         String email = findPasswordRequest.getEmail();
@@ -108,34 +136,6 @@ public class UserServiceImpl implements UserService {
         user.setPassword(passwordEncoder.encode(changePasswordRequest.getPassword()));
 
         userRepository.save(user);
-    }
-
-    @SneakyThrows
-    @Override
-    public ProfileResponse getProfile(String nickName) {
-        User profile = userRepository.findByNickName(nickName).orElseThrow(UserNotFoundException::new);
-
-        User user = userRepository.findByEmail(authenticationFacade.getUserEmail())
-                .orElseThrow(UserNotFoundException::new);
-
-        UserImage image = imageRepository.findByUserId(profile.getId());
-
-        double star = 0.0;
-
-        if (starRepository.findByTargetId(profile.getId()).isPresent()) {
-            star = (double) (Math.round((starRepository.sumStar(profile.getId()) /
-                    starRepository.countByTargetId(profile.getId())) * 10) / 10);
-        }
-
-        return ProfileResponse.builder()
-                .userId(profile.getId())
-                .email(profile.getEmail())
-                .nickName(nickName)
-                .sex(profile.getSex())
-                .star(star)
-                .image(image == null ? null : image.getImageName())
-                .mine(user.equals(profile))
-                .build();
     }
 
     @SneakyThrows
