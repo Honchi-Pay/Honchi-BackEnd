@@ -44,4 +44,4 @@ auth:
 
 image:
   upload:
-    dir: C:\Users\user\Desktop\대덕SW\Github\Honchi-BackEnd\src\main\resources\Images
+    dir: ${IMAGE_DRI}
