@@ -1,7 +1,6 @@
 package honchi.api.domain.message.controller;
 
 import honchi.api.domain.message.dto.ImageRequest;
-import honchi.api.domain.message.dto.MessageRequest;
 import honchi.api.domain.message.dto.MessageResponse;
 import honchi.api.domain.message.service.MessageService;
 import lombok.RequiredArgsConstructor;
@@ -22,9 +21,9 @@ public class MessageController {
         messageService.sendImage(imageRequest);
     }
 
-    @GetMapping
-    public List<MessageResponse> getMessage(@RequestBody @Valid MessageRequest messageRequest) {
-        return messageService.getList(messageRequest);
+    @GetMapping("/{roomId}")
+    public List<MessageResponse> getMessage(@PathVariable @Valid String roomId) {
+        return messageService.getList(roomId);
     }
     @GetMapping("/read")
     public void readMessage() {

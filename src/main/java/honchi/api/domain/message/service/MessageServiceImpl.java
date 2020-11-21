@@ -6,7 +6,6 @@ import honchi.api.domain.message.domain.Message;
 import honchi.api.domain.message.domain.enums.MessageType;
 import honchi.api.domain.message.domain.repository.MessageRepository;
 import honchi.api.domain.message.dto.ImageRequest;
-import honchi.api.domain.message.dto.MessageRequest;
 import honchi.api.domain.message.dto.MessageResponse;
 import honchi.api.domain.user.domain.User;
 import honchi.api.domain.user.domain.repository.UserRepository;
@@ -63,13 +62,13 @@ public class MessageServiceImpl implements MessageService {
     }
 
     @Override
-    public List<MessageResponse> getList(MessageRequest messageRequest) {
+    public List<MessageResponse> getList(String roomId) {
         userRepository.findByEmail(authenticationFacade.getUserEmail())
                 .orElseThrow(UserNotFoundException::new);
 
         List<MessageResponse> messages = new ArrayList<>();
 
-        for (Message message : messageRepository.findAllByChatIdOrderByTimeDesc(messageRequest.getChatId())) {
+        for (Message message : messageRepository.findAllByRoomIdOrderByTimeDesc(roomId)) {
             User user = userRepository.findById(message.getId())
                     .orElseThrow(UserNotFoundException::new);
 
