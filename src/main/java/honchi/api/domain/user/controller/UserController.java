@@ -24,6 +24,11 @@ public class UserController {
         userService.join(signUpRequest);
     }
 
+    @GetMapping("/profile")
+    public ProfileResponse getProfile(@RequestParam("nickName") @Valid String nickName) {
+        return userService.getProfile(nickName);
+    }
+
     @PutMapping("/password/find")
     public void findPassword(@RequestBody @Valid FindPasswordRequest findPasswordRequest) {
         userService.findPassword(findPasswordRequest);
@@ -32,11 +37,6 @@ public class UserController {
     @PutMapping("/password/change")
     public void changePassword(@RequestBody @Valid ChangePasswordRequest changePasswordRequest) {
         userService.changePassword(changePasswordRequest);
-    }
-
-    @GetMapping("/profile")
-    public ProfileResponse getProfile(@RequestParam("nickName") @Valid String nickName) {
-        return userService.getProfile(nickName);
     }
 
     @PutMapping("/profile")
