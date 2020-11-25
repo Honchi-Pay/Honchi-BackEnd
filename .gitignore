@@ -20,7 +20,7 @@ build/
 *.iml
 *.ipr
 out/
-/**/Images
+**/Images
 !**/src/main/**/out/
 !**/src/test/**/out/
 
