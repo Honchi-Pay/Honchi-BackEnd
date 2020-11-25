@@ -2,13 +2,12 @@ package honchi.api.domain.user.dto;
 
 import honchi.api.domain.user.domain.enums.Sex;
 import lombok.Getter;
-import lombok.Setter;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 @Getter
-@Setter
 public class SignUpRequest {
 
     @Email
@@ -18,10 +17,17 @@ public class SignUpRequest {
     private String password;
 
     @NotBlank
-    private String nick_name;
+    private String nickName;
 
     @NotBlank
-    private String phone_number;
+    private String phoneNumber;
 
+    @NotNull
     private Sex sex;
+
+    @NotNull
+    private Double lat;
+
+    @NotNull
+    private Double lon;
 }
