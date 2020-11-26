@@ -46,7 +46,7 @@ public class ChatServiceImpl implements ChatService {
             String title = chat.getTitle();
 
             if(title.equals("default")) {
-                title = chatRepository.findByRoomIdAndAuthority(chat.getRoomId(), Authority.LEADER).getTitle();
+                title = chatRepository.findByRoomIdAndAuthority(chat.getChatId(), Authority.LEADER).getTitle();
                 chatRepository.save(chat.updateTitle(title));
             }
 
@@ -64,13 +64,13 @@ public class ChatServiceImpl implements ChatService {
 
             String[] imageArray = images.stream().toArray(String[]::new);
 
-            Message message = messageRepository.findTop1ByChatIdOrderByTimeDesc(chat.getRoomId());
+            Message message = messageRepository.findTop1ByChatIdOrderByTimeDesc(chat.getChatId());
 
             chatListResponses.add(
                     ChatListResponse.builder()
-                            .roomId(chat.getRoomId())
+                            .chatId(chat.getChatId())
                             .title(title)
-                            .people(chatRepository.countByRoomId(chat.getRoomId()))
+                            .people(chatRepository.countByRoomId(chat.getChatId()))
                             .message(message.getMessage())
                             .images(imageArray)
                             .build()
