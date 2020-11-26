@@ -44,4 +44,4 @@ auth:
 
 image:
   upload:
-    dir: ${IMAGE_DRI}
+    dir: ${IMAGE_DIR}
