@@ -98,6 +98,6 @@ public class ChatServiceImpl implements ChatService {
         chatRepository.findByRoomId(roomId)
                 .orElseThrow(ChatNotFoundException::new);
 
-        chatRepository.deleteByUserIdAndRoomId(user.getId(), roomId);
+        chatRepository.deleteByRoomIdAndUserId(roomId, user.getId());
     }
 }
