@@ -64,7 +64,7 @@ public class ChatServiceImpl implements ChatService {
 
             String[] imageArray = images.stream().toArray(String[]::new);
 
-            Message message = messageRepository.findTop1ByChatIdOrderByTimeDesc(chat.getRoomId());
+            Message message = messageRepository.findTop1ByRoomIdOrderByTimeDesc(chat.getRoomId());
 
             chatListResponses.add(
                     ChatListResponse.builder()

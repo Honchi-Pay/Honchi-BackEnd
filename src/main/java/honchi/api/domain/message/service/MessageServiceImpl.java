@@ -48,7 +48,7 @@ public class MessageServiceImpl implements MessageService {
 
         messageRepository.save(
                 Message.builder()
-                        .chatId(imageRequest.getRoomId())
+                        .roomId(imageRequest.getRoomId())
                         .userId(user.getId())
                         .message(imageName)
                         .messageType(MessageType.IMAGE)
@@ -68,7 +68,7 @@ public class MessageServiceImpl implements MessageService {
 
         List<MessageResponse> messages = new ArrayList<>();
 
-        for (Message message : messageRepository.findAllByChatIdOrderByTimeDesc(roomId)) {
+        for (Message message : messageRepository.findAllByRoomIdOrderByTimeDesc(roomId)) {
             User user = userRepository.findById(message.getId())
                     .orElseThrow(UserNotFoundException::new);
 
