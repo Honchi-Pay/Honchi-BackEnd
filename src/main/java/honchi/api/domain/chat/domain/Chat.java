@@ -15,7 +15,7 @@ import java.util.List;
 public class Chat {
 
     @Id
-    private String chatId;
+    private String roomId;
 
     @Column(nullable = false)
     private Integer postId;
@@ -31,7 +31,7 @@ public class Chat {
 
     private Integer readPoint;
 
-    @OneToMany(mappedBy = "roomId", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "chatId", cascade = CascadeType.ALL)
     private List<Message> messages;
 
     public Chat updateTitle(String title) {

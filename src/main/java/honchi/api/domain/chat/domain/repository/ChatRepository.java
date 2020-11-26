@@ -12,9 +12,9 @@ import java.util.Optional;
 public interface ChatRepository extends CrudRepository<Chat, Integer> {
 
     List<Chat> findAllByUserId(Integer userId);
-    List<Chat> findAllByChatId(String chatId);
-    Optional<Chat> findByChatId(String chatId);
-    Chat findByChatIdAndAuthority(String chatId, Authority authority);
-    Integer countByChatId(String chatId);
-    void deleteByChatIdAndUserId(String chatId, Integer userId);
+    List<Chat> findAllByRoomId(String roomId);
+    Optional<Chat> findByRoomId(String roomId);
+    Chat findByRoomIdAndAuthority(String roomId, Authority authority);
+    Integer countByRoomId(String roomId);
+    void deleteByRoomIdAndUserId(String roomId, Integer userId);
 }

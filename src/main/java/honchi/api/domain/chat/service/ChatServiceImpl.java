@@ -46,7 +46,7 @@ public class ChatServiceImpl implements ChatService {
             String title = chat.getTitle();
 
             if(title.equals("default")) {
-                title = chatRepository.findByChatIdAndAuthority(chat.getChatId(), Authority.LEADER).getTitle();
+                title = chatRepository.findByRoomIdAndAuthority(chat.getRoomId(), Authority.LEADER).getTitle();
                 chatRepository.save(chat.updateTitle(title));
             }
 
@@ -64,13 +64,13 @@ public class ChatServiceImpl implements ChatService {
 
             String[] imageArray = images.stream().toArray(String[]::new);
 
-            Message message = messageRepository.findTop1ByRoomIdOrderByTimeDesc(chat.getChatId());
+            Message message = messageRepository.findTop1ByChatIdOrderByTimeDesc(chat.getRoomId());
 
             chatListResponses.add(
                     ChatListResponse.builder()
-                            .roomId(chat.getChatId())
+                            .roomId(chat.getRoomId())
                             .title(title)
-                            .people(chatRepository.countByChatId(chat.getChatId()))
+                            .people(chatRepository.countByRoomId(chat.getRoomId()))
                             .message(message.getMessage())
                             .images(imageArray)
                             .build()
@@ -85,7 +85,7 @@ public class ChatServiceImpl implements ChatService {
         userRepository.findByEmail(authenticationFacade.getUserEmail())
                 .orElseThrow(UserNotFoundException::new);
 
-        for (Chat chat : chatRepository.findAllByChatId(updateTitleRequest.getRoomId())) {
+        for (Chat chat : chatRepository.findAllByRoomId(updateTitleRequest.getRoomId())) {
             chatRepository.save(chat.updateTitle(updateTitleRequest.getTitle()));
         }
     }
@@ -95,9 +95,9 @@ public class ChatServiceImpl implements ChatService {
         User user = userRepository.findByEmail(authenticationFacade.getUserEmail())
                 .orElseThrow(UserNotFoundException::new);
 
-        chatRepository.findByChatId(roomId)
+        chatRepository.findByRoomId(roomId)
                 .orElseThrow(ChatNotFoundException::new);
 
-        chatRepository.deleteByChatIdAndUserId(roomId, user.getId());
+        chatRepository.deleteByRoomIdAndUserId(roomId, user.getId());
     }
 }
