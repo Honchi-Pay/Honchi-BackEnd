@@ -15,7 +15,7 @@ import java.util.List;
 public class Chat {
 
     @Id
-    private String roomId;
+    private String chatId;
 
     @Column(nullable = false)
     private Integer postId;
