@@ -46,7 +46,7 @@ public class ChatServiceImpl implements ChatService {
             String title = chat.getTitle();
 
             if(title.equals("default")) {
-                title = chatRepository.findByRoomIdAndAuthority(chat.getChatId(), Authority.LEADER).getTitle();
+                title = chatRepository.findByChatIdAndAuthority(chat.getChatId(), Authority.LEADER).getTitle();
                 chatRepository.save(chat.updateTitle(title));
             }
 
@@ -70,7 +70,7 @@ public class ChatServiceImpl implements ChatService {
                     ChatListResponse.builder()
                             .chatId(chat.getChatId())
                             .title(title)
-                            .people(chatRepository.countByRoomId(chat.getChatId()))
+                            .people(chatRepository.countByChatId(chat.getChatId()))
                             .message(message.getMessage())
                             .images(imageArray)
                             .build()
@@ -81,23 +81,23 @@ public class ChatServiceImpl implements ChatService {
     }
 
     @Override
-    public void updateTitle(String roomId, UpdateTitleRequest updateTitleRequest) {
+    public void updateTitle(String chatId, UpdateTitleRequest updateTitleRequest) {
         userRepository.findByEmail(authenticationFacade.getUserEmail())
                 .orElseThrow(UserNotFoundException::new);
 
-        for (Chat chat : chatRepository.findAllByRoomId(updateTitleRequest.getRoomId())) {
+        for (Chat chat : chatRepository.findAllByChatId(chatId)) {
             chatRepository.save(chat.updateTitle(updateTitleRequest.getTitle()));
         }
     }
 
     @Override
-    public void exitChat(String roomId) {
+    public void exitChat(String chatId) {
         User user = userRepository.findByEmail(authenticationFacade.getUserEmail())
                 .orElseThrow(UserNotFoundException::new);
 
-        chatRepository.findByRoomId(roomId)
+        chatRepository.findByChatId(chatId)
                 .orElseThrow(ChatNotFoundException::new);
 
-        chatRepository.deleteByRoomIdAndUserId(roomId, user.getId());
+        chatRepository.deleteByChatIdAndUserId(chatId, user.getId());
     }
 }
