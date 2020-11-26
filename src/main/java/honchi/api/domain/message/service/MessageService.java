@@ -8,6 +8,6 @@ import java.util.List;
 public interface MessageService {
 
     void sendImage(ImageRequest imageRequest);
-    List<MessageResponse> getList(String roomId);
+    List<MessageResponse> getList(String chatId);
     void readMessage();
 }
