@@ -1,11 +1,9 @@
 package honchi.api.domain.chat.domain;
 
 import honchi.api.domain.chat.domain.enums.Authority;
-import honchi.api.domain.message.domain.Message;
 import lombok.*;
 
 import javax.persistence.*;
-import java.util.List;
 
 @Getter
 @Entity
@@ -15,7 +13,7 @@ import java.util.List;
 public class Chat {
 
     @Id
-    private String roomId;
+    private String chatId;
 
     @Column(nullable = false)
     private Integer postId;
@@ -30,9 +28,6 @@ public class Chat {
     private Authority authority;
 
     private Integer readPoint;
-
-    @OneToMany(mappedBy = "chatId", cascade = CascadeType.ALL)
-    private List<Message> messages;
 
     public Chat updateTitle(String title) {
         this.title = title;
