@@ -15,14 +15,10 @@ import java.util.List;
 public class Chat {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private String roomId;
 
     @Column(nullable = false)
     private Integer postId;
-
-    @Column(nullable = false)
-    private String roomId;
 
     @Column(nullable = false)
     private Integer userId;
