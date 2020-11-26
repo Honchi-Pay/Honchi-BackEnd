@@ -16,5 +16,5 @@ public interface ChatRepository extends CrudRepository<Chat, Integer> {
     Optional<Chat> findByRoomId(String roomId);
     Chat findByRoomIdAndAuthority(String roomId, Authority authority);
     Integer countByRoomId(String roomId);
-    void deleteByUserIdAndRoomId(Integer userId, String roomId);
+    void deleteByRoomIdAndUserId(String roomId, Integer userId);
 }
