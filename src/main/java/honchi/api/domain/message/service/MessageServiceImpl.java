@@ -41,7 +41,7 @@ public class MessageServiceImpl implements MessageService {
         User user = userRepository.findByEmail(authenticationFacade.getUserEmail())
                 .orElseThrow(UserNotFoundException::new);
 
-        chatRepository.findByRoomId(imageRequest.getRoomId())
+        chatRepository.findByChatId(imageRequest.getRoomId())
                 .orElseThrow(ChatNotFoundException::new);
 
         String imageName = UUID.randomUUID().toString();
@@ -52,7 +52,7 @@ public class MessageServiceImpl implements MessageService {
                         .userId(user.getId())
                         .message(imageName)
                         .messageType(MessageType.IMAGE)
-                        .readCount(chatRepository.countByRoomId(imageRequest.getRoomId()) - 1)
+                        .readCount(chatRepository.countByChatId(imageRequest.getRoomId()) - 1)
                         .isDelete(false)
                         .time(LocalDateTime.now())
                         .build()
@@ -62,13 +62,13 @@ public class MessageServiceImpl implements MessageService {
     }
 
     @Override
-    public List<MessageResponse> getList(String roomId) {
+    public List<MessageResponse> getList(String chatId) {
         userRepository.findByEmail(authenticationFacade.getUserEmail())
                 .orElseThrow(UserNotFoundException::new);
 
         List<MessageResponse> messages = new ArrayList<>();
 
-        for (Message message : messageRepository.findAllByChatIdOrderByTimeDesc(roomId)) {
+        for (Message message : messageRepository.findAllByChatIdOrderByTimeDesc(chatId)) {
             User user = userRepository.findById(message.getId())
                     .orElseThrow(UserNotFoundException::new);
 
