@@ -8,8 +8,5 @@ import javax.validation.constraints.NotBlank;
 public class UpdateTitleRequest {
 
     @NotBlank
-    private String roomId;
-
-    @NotBlank
     private String title;
 }
