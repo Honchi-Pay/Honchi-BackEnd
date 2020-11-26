@@ -21,9 +21,9 @@ public class MessageController {
         messageService.sendImage(imageRequest);
     }
 
-    @GetMapping("/{roomId}")
-    public List<MessageResponse> getMessage(@PathVariable @Valid String roomId) {
-        return messageService.getList(roomId);
+    @GetMapping("/{chatId}")
+    public List<MessageResponse> getMessage(@PathVariable @Valid String chatId) {
+        return messageService.getList(chatId);
     }
 
     @PutMapping("/read")
