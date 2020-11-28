@@ -12,6 +12,7 @@ public enum ErrorCode {
     BAD_REQUEST(400, "Bad Request(Invalid Parameter)"),
     INVALID_AUTH_EMAIL(400,"Invalid Auth Email"),
     INVALID_AUTH_CODE(400,"Invalid Auth Code"),
+    USER_NOT_SAME(400, "User Not Same"),
 
     INVALID_TOKEN(401, "Invalid Token"),
     EXPIRED_TOKEN(401, "Expired Token"),
@@ -20,10 +21,10 @@ public enum ErrorCode {
     USER_NOT_FOUND(404, "User Not Found"),
     POST_NOT_FOUND(404, "Post Not Found"),
     CHAT_NOT_FOUND(404, "Chat Not Found"),
+    MESSAGE_NOT_FOUND(404, "Message Not Found"),
 
     PASSWORD_SAME(409, "Password Same Before"),
     USER_DUPLICATION(409, "User is Already Exists"),
-    USER_SAME(409, "User is Same"),
     USER_NICKNAME_DUPLICATION(409, "User NickName is Already Exists"),
     USER_PHONE_NUMBER_DUPLICATION(409, "User PhoneNumber is Already Exists"),
 

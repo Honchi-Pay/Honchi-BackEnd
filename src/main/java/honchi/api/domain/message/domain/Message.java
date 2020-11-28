@@ -19,7 +19,7 @@ public class Message {
 
     private Integer userId;
 
-    private String roomId;
+    private String chatId;
 
     private String message;
 
@@ -30,4 +30,10 @@ public class Message {
     private LocalDateTime time;
 
     private boolean isDelete;
+
+    public Message updateReadCount() {
+        this.readCount--;
+
+        return this;
+    }
 }

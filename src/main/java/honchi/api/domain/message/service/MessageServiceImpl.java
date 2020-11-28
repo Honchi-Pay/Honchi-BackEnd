@@ -1,5 +1,6 @@
 package honchi.api.domain.message.service;
 
+import honchi.api.domain.chat.domain.Chat;
 import honchi.api.domain.chat.domain.repository.ChatRepository;
 import honchi.api.domain.chat.exception.ChatNotFoundException;
 import honchi.api.domain.message.domain.Message;
@@ -41,18 +42,18 @@ public class MessageServiceImpl implements MessageService {
         User user = userRepository.findByEmail(authenticationFacade.getUserEmail())
                 .orElseThrow(UserNotFoundException::new);
 
-        chatRepository.findByRoomId(imageRequest.getRoomId())
+        chatRepository.findByChatId(imageRequest.getRoomId())
                 .orElseThrow(ChatNotFoundException::new);
 
         String imageName = UUID.randomUUID().toString();
 
         messageRepository.save(
                 Message.builder()
-                        .roomId(imageRequest.getRoomId())
+                        .chatId(imageRequest.getRoomId())
                         .userId(user.getId())
                         .message(imageName)
                         .messageType(MessageType.IMAGE)
-                        .readCount(chatRepository.countByRoomId(imageRequest.getRoomId()) - 1)
+                        .readCount(chatRepository.countByChatId(imageRequest.getRoomId()) - 1)
                         .isDelete(false)
                         .time(LocalDateTime.now())
                         .build()
@@ -62,18 +63,19 @@ public class MessageServiceImpl implements MessageService {
     }
 
     @Override
-    public List<MessageResponse> getList(String roomId) {
+    public List<MessageResponse> getList(String chatId) {
         userRepository.findByEmail(authenticationFacade.getUserEmail())
                 .orElseThrow(UserNotFoundException::new);
 
         List<MessageResponse> messages = new ArrayList<>();
 
-        for (Message message : messageRepository.findAllByRoomIdOrderByTimeDesc(roomId)) {
+        for (Message message : messageRepository.findAllByChatIdOrderByTimeDesc(chatId)) {
             User user = userRepository.findById(message.getId())
                     .orElseThrow(UserNotFoundException::new);
 
             messages.add(
                     MessageResponse.builder()
+                            .messageId(message.getId())
                             .userId(user.getId())
                             .message(message.getMessage())
                             .nickName(user.getNickName())
@@ -88,7 +90,21 @@ public class MessageServiceImpl implements MessageService {
     }
 
     @Override
-    public void readMessage() {
-        
+    public void readMessage(String chatId) {
+        User user = userRepository.findByEmail(authenticationFacade.getUserEmail())
+                .orElseThrow(UserNotFoundException::new);
+
+        Chat chat = chatRepository.findByChatIdAndUserId(chatId, user.getId())
+                .orElseThrow(ChatNotFoundException::new);
+
+        Message recentMessage = messageRepository.findTop1ByChatIdOrderByTimeDesc(chatId);
+
+        if(!chat.getReadPoint().equals(recentMessage.getId())) {
+            for (Message message : messageRepository.findByChatIdAndIdAndId(
+                    chatId, chat.getReadPoint(), recentMessage.getId())) {
+                messageRepository.save(message.updateReadCount());
+            }
+            chatRepository.save(chat.updateRead(recentMessage.getId()));
+        }
     }
 }
