@@ -34,4 +34,10 @@ public class Chat {
 
         return this;
     }
+
+    public Chat updateRead(Integer readPoint) {
+        this.readPoint = readPoint;
+
+        return this;
+    }
 }
