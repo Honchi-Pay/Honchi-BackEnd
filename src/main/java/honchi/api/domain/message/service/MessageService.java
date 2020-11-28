@@ -9,5 +9,5 @@ public interface MessageService {
 
     void sendImage(ImageRequest imageRequest);
     List<MessageResponse> getList(String chatId);
-    void readMessage();
+    void readMessage(String chatId);
 }
