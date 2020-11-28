@@ -9,6 +9,8 @@ import java.time.LocalDateTime;
 @Builder
 public class MessageResponse {
 
+    private Integer messageId;
+
     private Integer userId;
 
     private String nickName;
