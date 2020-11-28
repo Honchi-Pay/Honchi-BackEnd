@@ -26,8 +26,8 @@ public class MessageController {
         return messageService.getList(chatId);
     }
 
-    @PutMapping("/read")
-    public void readMessage() {
-        messageService.readMessage();
+    @PutMapping("/{chatId}")
+    public void readMessage(@PathVariable @Valid String chatId) {
+        messageService.readMessage(chatId);
     }
 }
