@@ -36,4 +36,10 @@ public class Message {
 
         return this;
     }
+
+    public Message delete() {
+        this.isDelete = true;
+
+        return this;
+    }
 }
