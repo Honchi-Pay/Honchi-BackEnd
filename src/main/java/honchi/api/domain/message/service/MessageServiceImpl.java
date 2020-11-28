@@ -8,10 +8,12 @@ import honchi.api.domain.message.domain.enums.MessageType;
 import honchi.api.domain.message.domain.repository.MessageRepository;
 import honchi.api.domain.message.dto.ImageRequest;
 import honchi.api.domain.message.dto.MessageResponse;
+import honchi.api.domain.message.exception.MessageNotFoundException;
 import honchi.api.domain.user.domain.User;
 import honchi.api.domain.user.domain.repository.UserRepository;
 import honchi.api.global.config.security.AuthenticationFacade;
 import honchi.api.global.error.exception.UserNotFoundException;
+import honchi.api.global.error.exception.UserNotSameException;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Value;
@@ -106,5 +108,20 @@ public class MessageServiceImpl implements MessageService {
             }
             chatRepository.save(chat.updateRead(recentMessage.getId()));
         }
+    }
+
+    @Override
+    public void deleteMessage(Integer messageId) {
+        User user = userRepository.findByEmail(authenticationFacade.getUserEmail())
+                .orElseThrow(UserNotFoundException::new);
+
+        Message message = messageRepository.findById(messageId)
+                .orElseThrow(MessageNotFoundException::new);
+
+        if(!user.getId().equals(message.getUserId())) {
+            throw new UserNotSameException();
+        }
+
+        messageRepository.save(message.delete());
     }
 }

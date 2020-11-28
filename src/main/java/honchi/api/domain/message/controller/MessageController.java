@@ -30,4 +30,9 @@ public class MessageController {
     public void readMessage(@PathVariable @Valid String chatId) {
         messageService.readMessage(chatId);
     }
+
+    @DeleteMapping("/{messageId}")
+    public void deleteMessage(@PathVariable @Valid Integer messageId) {
+        messageService.deleteMessage(messageId);
+    }
 }
