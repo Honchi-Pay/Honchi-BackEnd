@@ -30,4 +30,10 @@ public class Message {
     private LocalDateTime time;
 
     private boolean isDelete;
+
+    public Message updateReadCount() {
+        this.readCount--;
+
+        return this;
+    }
 }
