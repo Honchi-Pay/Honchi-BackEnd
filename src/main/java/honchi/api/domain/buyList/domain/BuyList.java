@@ -2,10 +2,7 @@ package honchi.api.domain.buyList.domain;
 
 import lombok.*;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Getter
@@ -19,10 +16,13 @@ public class BuyList {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
+    @Column(nullable = false)
     private Integer userId;
 
+    @Column(nullable = false)
     private Integer postId;
 
+    @Column(nullable = false)
     private Integer price;
 
     private LocalDateTime time;

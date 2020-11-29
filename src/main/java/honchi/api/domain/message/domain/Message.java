@@ -17,12 +17,16 @@ public class Message {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
+    @Column(nullable = false)
     private Integer userId;
 
+    @Column(nullable = false)
     private String chatId;
 
+    @Column(nullable = false)
     private String message;
 
+    @Enumerated(EnumType.STRING)
     private MessageType messageType;
 
     private Integer readCount;
