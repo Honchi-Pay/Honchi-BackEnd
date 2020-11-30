@@ -26,4 +26,10 @@ public class BuyList {
     private Integer price;
 
     private LocalDateTime time;
+
+    public BuyList updateTime() {
+        this.time = LocalDateTime.now();
+
+        return this;
+    }
 }
