@@ -4,7 +4,10 @@ import honchi.api.domain.buyList.domain.BuyList;
 import honchi.api.domain.buyList.domain.repository.BuyListRepository;
 import honchi.api.domain.buyList.dto.BuyContentResponse;
 import honchi.api.domain.buyList.dto.BuyListResponse;
+import honchi.api.domain.buyList.dto.SetPriceRequest;
 import honchi.api.domain.buyList.exception.BuyListNotFoundException;
+import honchi.api.domain.chat.domain.repository.ChatRepository;
+import honchi.api.domain.chat.exception.ChatNotFoundException;
 import honchi.api.domain.post.domain.Post;
 import honchi.api.domain.post.domain.PostAttend;
 import honchi.api.domain.post.domain.repository.PostAttendRepository;
@@ -30,12 +33,33 @@ public class BuyListServiceImpl implements BuyListService {
 
     private final UserRepository userRepository;
     private final PostRepository postRepository;
+    private final ChatRepository chatRepository;
     private final BuyListRepository buyListRepository;
     private final UserImageRepository userImageRepository;
     private final PostImageRepository postImageRepository;
     private final PostAttendRepository postAttendRepository;
 
     private final AuthenticationFacade authenticationFacade;
+
+    @Override
+    public void setPrice(SetPriceRequest setPriceRequest) {
+        User user = userRepository.findByEmail(authenticationFacade.getUserEmail())
+                .orElseThrow(UserNotFoundException::new);
+
+        postRepository.findById(setPriceRequest.getPostId())
+                .orElseThrow(PostNotFoundException::new);
+
+        chatRepository.findByChatIdAndUserId(setPriceRequest.getChatId(), user.getId())
+                .orElseThrow(ChatNotFoundException::new);
+
+        buyListRepository.save(
+                BuyList.builder()
+                        .postId(setPriceRequest.getPostId())
+                        .userId(user.getId())
+                        .price(setPriceRequest.getPrice())
+                        .build()
+        );
+    }
 
     @Override
     public List<BuyListResponse> getBuyList() {
