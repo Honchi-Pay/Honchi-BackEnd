@@ -9,5 +9,5 @@ import java.util.List;
 @Repository
 public interface BuyListRepository extends JpaRepository<BuyList, Integer> {
 
-    List<BuyList> findByUserId(Integer userId);
+    List<BuyList> findByUserIdAndTimeIsNotNull(Integer userId);
 }

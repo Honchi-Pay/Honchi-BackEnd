@@ -44,7 +44,7 @@ public class BuyListServiceImpl implements BuyListService {
 
         List<BuyListResponse> buyListResponses = new ArrayList<>();
 
-        for (BuyList buyList : buyListRepository.findByUserId(user.getId())) {
+        for (BuyList buyList : buyListRepository.findByUserIdAndTimeIsNotNull(user.getId())) {
             Post post = postRepository.findById(buyList.getPostId())
                     .orElseThrow(PostNotFoundException::new);
 
