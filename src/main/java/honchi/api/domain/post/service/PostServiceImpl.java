@@ -1,5 +1,7 @@
 package honchi.api.domain.post.service;
 
+import honchi.api.domain.buyList.domain.BuyList;
+import honchi.api.domain.buyList.domain.repository.BuyListRepository;
 import honchi.api.domain.post.domain.Post;
 import honchi.api.domain.post.domain.PostAttend;
 import honchi.api.domain.post.domain.PostImage;
@@ -16,6 +18,7 @@ import honchi.api.domain.user.domain.repository.UserImageRepository;
 import honchi.api.domain.user.domain.repository.UserRepository;
 import honchi.api.global.config.security.AuthenticationFacade;
 import honchi.api.global.error.exception.UserNotFoundException;
+import honchi.api.global.error.exception.UserNotSameException;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Value;
@@ -37,6 +40,7 @@ public class PostServiceImpl implements PostService {
 
     private final UserRepository userRepository;
     private final PostRepository postRepository;
+    private final BuyListRepository buyListRepository;
     private final UserImageRepository userImageRepository;
     private final PostImageRepository postImageRepository;
     private final PostAttendRepository postAttendRepository;
@@ -343,6 +347,25 @@ public class PostServiceImpl implements PostService {
             );
         }
         postRepository.save(post.setImage(postImages));
+    }
+
+    @Override
+    public void complete(Integer postId) {
+        User user = userRepository.findByEmail(authenticationFacade.getUserEmail())
+                .orElseThrow(UserNotFoundException::new);
+
+        Post post = postRepository.findById(postId)
+                .orElseThrow(PostNotFoundException::new);
+
+        if(!user.getId().equals(post.getUserId())) {
+            throw new UserNotSameException();
+        }
+
+        postRepository.save(post.complete());
+
+        for (BuyList buyList : buyListRepository.findByPostId(postId)) {
+            buyListRepository.save(buyList.updateTime());
+        }
     }
 
     @SneakyThrows

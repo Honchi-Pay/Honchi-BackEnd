@@ -45,13 +45,13 @@ public class Post {
     @OrderColumn
     private List<PostImage> image;
 
-    @OneToMany(mappedBy = "postId", cascade = CascadeType.ALL)
-    private List<PostAttend> postAttends;
-
     private LocalDateTime createdAt;
 
     @Enumerated(EnumType.STRING)
     private Completion completion;
+
+    @OneToMany(mappedBy = "postId", cascade = CascadeType.ALL)
+    private List<PostAttend> postAttends;
 
     public Post setImage(List<PostImage> postImages) {
         this.image = postImages;
@@ -64,6 +64,12 @@ public class Post {
         this.content = postFixRequest.getContent();
         this.category = postFixRequest.getCategory();
         this.item = postFixRequest.getItem();
+
+        return this;
+    }
+
+    public Post complete() {
+        this.completion = Completion.COMPLETION;
 
         return this;
     }
