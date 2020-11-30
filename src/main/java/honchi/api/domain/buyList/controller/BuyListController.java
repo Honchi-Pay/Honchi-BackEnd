@@ -2,12 +2,10 @@ package honchi.api.domain.buyList.controller;
 
 import honchi.api.domain.buyList.dto.BuyContentResponse;
 import honchi.api.domain.buyList.dto.BuyListResponse;
+import honchi.api.domain.buyList.dto.SetPriceRequest;
 import honchi.api.domain.buyList.service.BuyListService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -18,6 +16,11 @@ import java.util.List;
 public class BuyListController {
 
     private final BuyListService buyListService;
+
+    @PostMapping
+    public void setPrice(@RequestBody @Valid SetPriceRequest setPriceRequest) {
+        buyListService.setPrice(setPriceRequest);
+    }
 
     @GetMapping
     public List<BuyListResponse> getBuyList() {
