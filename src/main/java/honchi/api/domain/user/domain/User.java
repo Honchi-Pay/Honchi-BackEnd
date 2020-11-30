@@ -1,5 +1,6 @@
 package honchi.api.domain.user.domain;
 
+import honchi.api.domain.buyList.domain.BuyList;
 import honchi.api.domain.chat.domain.Chat;
 import honchi.api.domain.post.domain.Post;
 import honchi.api.domain.post.domain.PostAttend;
@@ -37,6 +38,10 @@ public class User {
     @Enumerated(EnumType.STRING)
     private Sex sex;
 
+    private Double lat;
+
+    private Double lon;
+
     @OneToOne(cascade = CascadeType.ALL)
     private UserImage image;
 
@@ -55,9 +60,8 @@ public class User {
     @OneToMany(mappedBy = "userId", cascade = CascadeType.ALL)
     private List<Chat> chats;
 
-    private Double lat;
-
-    private Double lon;
+    @OneToMany(mappedBy = "userId", cascade = CascadeType.ALL)
+    private List<BuyList> buyLists;
 
     @Builder
     public User(String email, String password, String nickName, String phoneNumber, Sex sex, double lat, double lon) {
