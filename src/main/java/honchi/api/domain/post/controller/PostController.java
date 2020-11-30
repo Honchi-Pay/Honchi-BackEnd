@@ -67,6 +67,11 @@ public class PostController {
         postService.fixPost(postId, postFixRequest);
     }
 
+    @PutMapping("/{postId}/complete")
+    public void complete(@PathVariable Integer postId) {
+        postService.complete(postId);
+    }
+
     @DeleteMapping("/{postId}")
     public void deletePost(@PathVariable Integer postId) {
         postService.deletePost(postId);
