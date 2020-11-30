@@ -10,4 +10,5 @@ import java.util.List;
 public interface BuyListRepository extends JpaRepository<BuyList, Integer> {
 
     List<BuyList> findByUserIdAndTimeIsNotNull(Integer userId);
+    List<BuyList> findByPostId(Integer postId);
 }
