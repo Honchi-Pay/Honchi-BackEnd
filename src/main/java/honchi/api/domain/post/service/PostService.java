@@ -17,5 +17,6 @@ public interface PostService {
     void updatePoint(UpdatePointRequest updatePointRequest);
     void attendPost(Integer postId);
     void fixPost(Integer postId, PostFixRequest postFixRequest);
+    void complete(Integer postId);
     void deletePost(Integer postId);
 }
