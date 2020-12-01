@@ -52,7 +52,7 @@ public class PostServiceImpl implements PostService {
 
     @SneakyThrows
     @Override
-    public void write(PostWriteRequest postWriteRequest) {
+    public Integer write(PostWriteRequest postWriteRequest) {
         User user = userRepository.findByEmail(authenticationFacade.getUserEmail())
                 .orElseThrow(UserNotFoundException::new);
 
@@ -89,6 +89,8 @@ public class PostServiceImpl implements PostService {
             }
             postRepository.save(post.setImage(postImages));
         }
+
+        return post.getId();
     }
 
     @Override

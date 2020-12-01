@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface PostService {
 
-    void write(PostWriteRequest postWriteRequest);
+    Integer write(PostWriteRequest postWriteRequest);
     List<RecentPostListResponse> getRecentList(Category category);
     List<PostListResponse> getList(PostListRequest postListRequest);
     List<PostListResponse> searchPost(PostSearchListRequest postSearchListRequest);
