@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface MessageService {
 
-    void sendImage(ImageRequest imageRequest);
+    Integer sendImage(ImageRequest imageRequest);
     List<MessageResponse> getList(String chatId);
     void readMessage(String chatId);
     void deleteMessage(Integer messageId);
