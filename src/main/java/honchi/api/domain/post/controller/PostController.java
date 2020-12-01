@@ -17,8 +17,8 @@ public class PostController {
     private final PostService postService;
 
     @PostMapping
-    public void write(@ModelAttribute @Valid PostWriteRequest postWriteRequest) {
-        postService.write(postWriteRequest);
+    public Integer write(@ModelAttribute @Valid PostWriteRequest postWriteRequest) {
+        return postService.write(postWriteRequest);
     }
 
     @GetMapping("/recent")
