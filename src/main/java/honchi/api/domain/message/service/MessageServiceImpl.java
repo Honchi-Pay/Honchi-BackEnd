@@ -44,18 +44,18 @@ public class MessageServiceImpl implements MessageService {
         User user = userRepository.findByEmail(authenticationFacade.getUserEmail())
                 .orElseThrow(UserNotFoundException::new);
 
-        chatRepository.findByChatId(imageRequest.getRoomId())
+        chatRepository.findByChatId(imageRequest.getChatId())
                 .orElseThrow(ChatNotFoundException::new);
 
         String imageName = UUID.randomUUID().toString();
 
         messageRepository.save(
                 Message.builder()
-                        .chatId(imageRequest.getRoomId())
+                        .chatId(imageRequest.getChatId())
                         .userId(user.getId())
                         .message(imageName)
                         .messageType(MessageType.IMAGE)
-                        .readCount(chatRepository.countByChatId(imageRequest.getRoomId()) - 1)
+                        .readCount(chatRepository.countByChatId(imageRequest.getChatId()) - 1)
                         .isDelete(false)
                         .time(LocalDateTime.now())
                         .build()
