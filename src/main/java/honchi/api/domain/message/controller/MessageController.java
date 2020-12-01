@@ -17,8 +17,8 @@ public class MessageController {
     private final MessageService messageService;
 
     @PostMapping
-    public void sendImage(@ModelAttribute @Valid ImageRequest imageRequest) {
-        messageService.sendImage(imageRequest);
+    public Integer sendImage(@ModelAttribute @Valid ImageRequest imageRequest) {
+        return messageService.sendImage(imageRequest);
     }
 
     @GetMapping("/{chatId}")
