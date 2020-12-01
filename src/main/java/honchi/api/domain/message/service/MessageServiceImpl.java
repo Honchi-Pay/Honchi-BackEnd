@@ -40,7 +40,7 @@ public class MessageServiceImpl implements MessageService {
 
     @SneakyThrows
     @Override
-    public void sendImage(ImageRequest imageRequest) {
+    public Integer sendImage(ImageRequest imageRequest) {
         User user = userRepository.findByEmail(authenticationFacade.getUserEmail())
                 .orElseThrow(UserNotFoundException::new);
 
@@ -49,7 +49,7 @@ public class MessageServiceImpl implements MessageService {
 
         String imageName = UUID.randomUUID().toString();
 
-        messageRepository.save(
+        Message message = messageRepository.save(
                 Message.builder()
                         .chatId(imageRequest.getChatId())
                         .userId(user.getId())
@@ -62,6 +62,7 @@ public class MessageServiceImpl implements MessageService {
         );
 
         imageRequest.getImage().transferTo(new File(imageDirPath, imageName));
+        return message.getId();
     }
 
     @Override
@@ -104,6 +105,7 @@ public class MessageServiceImpl implements MessageService {
         if(!chat.getReadPoint().equals(recentMessage.getId())) {
             for (Message message : messageRepository.findByChatIdAndIdAndId(
                     chatId, chat.getReadPoint(), recentMessage.getId())) {
+                if(message.getMessageType().equals(MessageType.INFO)) continue;
                 messageRepository.save(message.updateReadCount());
             }
             chatRepository.save(chat.updateRead(recentMessage.getId()));
