@@ -78,12 +78,11 @@ public class MessageServiceImpl implements MessageService {
 
             messages.add(
                     MessageResponse.builder()
-                            .messageId(message.getId())
+                            .id(message.getId())
                             .userId(user.getId())
                             .message(message.getMessage())
-                            .nickName(user.getNickName())
+                            .name(user.getNickName())
                             .time(message.getTime())
-                            .readCount(message.getReadCount())
                             .isDelete(message.isDelete())
                             .isMine(user.getId().equals(message.getUserId()))
                             .build()
