@@ -1,5 +1,6 @@
 package honchi.api.domain.message.dto;
 
+import honchi.api.domain.message.domain.enums.MessageType;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -9,7 +10,7 @@ import java.time.LocalDateTime;
 @Builder
 public class MessageResponse {
 
-    private Integer messageId;
+    private Integer id;
 
     private Integer userId;
 
@@ -17,11 +18,13 @@ public class MessageResponse {
 
     private String message;
 
+    private MessageType messageType;
+
     private Integer readCount;
 
     private LocalDateTime time;
 
-    private boolean isMine;
-
     private boolean isDelete;
+
+    private boolean isMine;
 }
