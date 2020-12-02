@@ -15,9 +15,7 @@ public class PostListResponse {
 
     private String writer;
 
-    private Double lat;
-
-    private Double lon;
+    private String address;
 
     private String image;
 
