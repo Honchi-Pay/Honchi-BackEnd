@@ -45,3 +45,7 @@ auth:
 image:
   upload:
     dir: ${IMAGE_DIR}
+
+map:
+  api:
+    key: ${MAP_API_KEY}
