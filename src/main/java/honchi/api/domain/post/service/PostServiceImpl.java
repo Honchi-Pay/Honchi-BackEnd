@@ -1,5 +1,7 @@
 package honchi.api.domain.post.service;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import honchi.api.domain.buyList.domain.BuyList;
 import honchi.api.domain.buyList.domain.repository.BuyListRepository;
 import honchi.api.domain.post.domain.Post;
@@ -7,6 +9,7 @@ import honchi.api.domain.post.domain.PostAttend;
 import honchi.api.domain.post.domain.PostImage;
 import honchi.api.domain.post.domain.enums.Category;
 import honchi.api.domain.post.domain.enums.Completion;
+import honchi.api.domain.post.domain.kakaoMap.KakaoResponseVO;
 import honchi.api.domain.post.domain.repository.PostAttendRepository;
 import honchi.api.domain.post.domain.repository.PostImageRepository;
 import honchi.api.domain.post.domain.repository.PostRepository;
@@ -19,6 +22,9 @@ import honchi.api.domain.user.domain.repository.UserRepository;
 import honchi.api.global.config.security.AuthenticationFacade;
 import honchi.api.global.error.exception.UserNotFoundException;
 import honchi.api.global.error.exception.UserNotSameException;
+import kong.unirest.HttpResponse;
+import kong.unirest.JsonNode;
+import kong.unirest.Unirest;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Value;
@@ -49,6 +55,9 @@ public class PostServiceImpl implements PostService {
 
     @Value("${image.upload.dir}")
     private String imageDirPath;
+
+    @Value("${map.api.key}")
+    private String mapApiKey;
 
     @SneakyThrows
     @Override
@@ -117,7 +126,6 @@ public class PostServiceImpl implements PostService {
                             .lon(post.getLon())
                             .createdAt(post.getCreatedAt())
                             .image(postImage == null ? null : postImage.getImageName())
-                            .image(postImage.getImageName())
                             .build()
             );
         }
@@ -151,9 +159,7 @@ public class PostServiceImpl implements PostService {
                                 .title(post.getTitle())
                                 .writer(writer.getNickName())
                                 .image(postImage != null ? postImage.getImageName() : null)
-                                .lat(post.getLat())
-                                .lon(post.getLon())
-                                .image(postImage.getImageName())
+                                .address(getAddress(post.getLat(), post.getLon()))
                                 .createdAt(post.getCreatedAt())
                                 .build()
                 );
@@ -188,9 +194,7 @@ public class PostServiceImpl implements PostService {
                                 .title(list.getTitle())
                                 .writer(writer.getNickName())
                                 .image(postImage != null ? postImage.getImageName() : null)
-                                .lat(list.getLat())
-                                .lon(list.getLon())
-                                .image(postImage.getImageName())
+                                .address(getAddress(list.getLat(), list.getLon()))
                                 .createdAt(list.getCreatedAt())
                                 .build()
                 );
@@ -220,8 +224,7 @@ public class PostServiceImpl implements PostService {
                 .title(post.getTitle())
                 .content(post.getContent())
                 .writer(writer.getNickName())
-                .lat(post.getLat())
-                .lon(post.getLon())
+                .address(getAddress(post.getLat(), post.getLon()))
                 .images(postImages)
                 .createdAt(post.getCreatedAt())
                 .isMine(writer.equals(user))
@@ -384,5 +387,28 @@ public class PostServiceImpl implements PostService {
         }
 
         postRepository.deleteById(postId);
+    }
+
+    @SneakyThrows
+    private String getAddress (double lat, double lon) {
+        try {
+            String apiUrl = "https://dapi.kakao.com/v2/local/geo/coord2address.json?input_coord=WGS84&x=" + lon + "&y=" + lat;
+
+            HttpResponse<JsonNode> response = Unirest.get(apiUrl)
+                    .header("Authorization", "KakaoAK " + mapApiKey)
+                    .asJson();
+
+            ObjectMapper objectMapper = new ObjectMapper();
+            objectMapper.configure(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY, true);
+
+            KakaoResponseVO kakaoResponseVO = objectMapper.readValue(response.getBody().toString(), KakaoResponseVO.class);
+
+            return kakaoResponseVO.getDocuments().get(0).getRoad_address().get("building_name") != "" ?
+                    (String) kakaoResponseVO.getDocuments().get(0).getRoad_address().get("building_name") :
+                    (String) kakaoResponseVO.getDocuments().get(0).getRoad_address().get("address_name");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }
