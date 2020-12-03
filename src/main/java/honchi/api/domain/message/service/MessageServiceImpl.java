@@ -14,12 +14,11 @@ import honchi.api.domain.user.domain.repository.UserRepository;
 import honchi.api.global.config.security.AuthenticationFacade;
 import honchi.api.global.error.exception.UserNotFoundException;
 import honchi.api.global.error.exception.UserNotSameException;
+import honchi.api.global.s3.S3Service;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.io.File;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -29,14 +28,13 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class MessageServiceImpl implements MessageService {
 
+    private final S3Service s3Service;
+
     private final UserRepository userRepository;
     private final ChatRepository chatRepository;
     private final MessageRepository messageRepository;
 
     private final AuthenticationFacade authenticationFacade;
-
-    @Value("${image.upload.dir}")
-    private String imageDirPath;
 
     @SneakyThrows
     @Override
@@ -61,7 +59,8 @@ public class MessageServiceImpl implements MessageService {
                         .build()
         );
 
-        imageRequest.getImage().transferTo(new File(imageDirPath, imageName));
+        s3Service.upload(imageRequest.getImage(), imageName);
+
         return message.getId();
     }
 
@@ -123,6 +122,10 @@ public class MessageServiceImpl implements MessageService {
 
         if(!user.getId().equals(message.getUserId())) {
             throw new UserNotSameException();
+        }
+
+        if(message.getMessageType().equals(MessageType.IMAGE)) {
+            s3Service.delete(message.getMessage());
         }
 
         messageRepository.save(message.delete());
