@@ -47,10 +47,6 @@ auth:
       access: ${JWT_ACCESS}
       refresh: ${JWT_REFRESH}
 
-image:
-  upload:
-    dir: ${IMAGE_DIR}
-
 map:
   api:
     key: ${MAP_API_KEY}
