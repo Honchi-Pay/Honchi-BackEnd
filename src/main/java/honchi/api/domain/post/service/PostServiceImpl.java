@@ -22,6 +22,7 @@ import honchi.api.domain.user.domain.repository.UserRepository;
 import honchi.api.global.config.security.AuthenticationFacade;
 import honchi.api.global.error.exception.UserNotFoundException;
 import honchi.api.global.error.exception.UserNotSameException;
+import honchi.api.global.s3.S3Service;
 import kong.unirest.HttpResponse;
 import kong.unirest.JsonNode;
 import kong.unirest.Unirest;
@@ -32,8 +33,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.transaction.Transactional;
-import java.io.File;
-import java.nio.file.Files;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -44,6 +43,8 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class PostServiceImpl implements PostService {
 
+    private final S3Service s3Service;
+
     private final UserRepository userRepository;
     private final PostRepository postRepository;
     private final BuyListRepository buyListRepository;
@@ -52,9 +53,6 @@ public class PostServiceImpl implements PostService {
     private final PostAttendRepository postAttendRepository;
 
     private final AuthenticationFacade authenticationFacade;
-
-    @Value("${image.upload.dir}")
-    private String imageDirPath;
 
     @Value("${map.api.key}")
     private String mapApiKey;
@@ -88,7 +86,7 @@ public class PostServiceImpl implements PostService {
             for (MultipartFile file : postWriteRequest.getImages()) {
                 String imageName = UUID.randomUUID().toString();
 
-                file.transferTo(new File(imageDirPath, imageName));
+                s3Service.upload(file, imageName);
                 postImages.add(
                         PostImage.builder()
                                 .postId(post.getId())
@@ -332,7 +330,7 @@ public class PostServiceImpl implements PostService {
         postRepository.save(post.updateContent(postFixRequest));
 
         for (PostImage postImage : postImageRepository.findByPostIdOrderById(postId)) {
-            Files.delete(new File(imageDirPath, postImage.getImageName()).toPath());
+            s3Service.delete(postImage.getImageName());
         }
 
         postImageRepository.deleteByPostId(postId);
@@ -342,7 +340,7 @@ public class PostServiceImpl implements PostService {
         for (MultipartFile file : postFixRequest.getImages()) {
             String imageName = UUID.randomUUID().toString();
 
-            file.transferTo(new File(imageDirPath, imageName));
+            s3Service.upload(file, imageName);
 
             postImages.add(
                     PostImage.builder()
@@ -383,7 +381,7 @@ public class PostServiceImpl implements PostService {
                 .orElseThrow(PostNotFoundException::new);
 
         for (PostImage postImage : postImageRepository.findAllByPostId(postId)) {
-            Files.delete(new File(imageDirPath, postImage.getImageName()).toPath());
+            s3Service.delete(postImage.getImageName());
         }
 
         postRepository.deleteById(postId);
