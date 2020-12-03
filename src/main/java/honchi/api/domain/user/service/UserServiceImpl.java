@@ -13,19 +13,20 @@ import honchi.api.domain.user.exception.*;
 import honchi.api.global.config.security.AuthenticationFacade;
 import honchi.api.global.error.exception.BadRequestException;
 import honchi.api.global.error.exception.UserNotFoundException;
+import honchi.api.global.s3.S3Service;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.io.File;
 import java.util.Optional;
 import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
+
+    private final S3Service s3Service;
 
     private final UserRepository userRepository;
     private final StarRepository starRepository;
@@ -37,9 +38,6 @@ public class UserServiceImpl implements UserService {
     private final PasswordEncoder passwordEncoder;
 
     private final AuthenticationFacade authenticationFacade;
-
-    @Value("${image.upload.dir}")
-    private String imageDirPath;
 
     @Override
     public void alone(String email) {
@@ -80,7 +78,6 @@ public class UserServiceImpl implements UserService {
         );
     }
 
-    @SneakyThrows
     @Override
     public ProfileResponse getProfile(String nickName) {
         User profile = userRepository.findByNickName(nickName).orElseThrow(UserNotFoundException::new);
@@ -154,7 +151,7 @@ public class UserServiceImpl implements UserService {
             if (user.getImage() != null) {
                 UserImage profile = imageRepository.findByUserId(user.getId());
 
-                new File(imageDirPath, profile.getImageName()).delete();
+                s3Service.delete(profile.getImageName());
 
                 profile.setImageName(imageName);
 
@@ -167,7 +164,7 @@ public class UserServiceImpl implements UserService {
                                 .build()
                 );
             }
-            profileUpdateRequest.getProfileImage().transferTo(new File(imageDirPath, imageName));
+            s3Service.upload(profileUpdateRequest.getProfileImage(), imageName);
         }
 
         user.setNickName(profileUpdateRequest.getNickName());
@@ -211,8 +208,14 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void deleteUser(String nickName) {
-        userRepository.findByEmail(authenticationFacade.getUserEmail())
+        User user = userRepository.findByEmail(authenticationFacade.getUserEmail())
                 .orElseThrow(UserNotFoundException::new);
+
+        UserImage userImage = imageRepository.findByUserId(user.getId());
+
+        if(userImage.getImageName() != null) {
+            s3Service.delete(userImage.getImageName());
+        }
 
         userRepository.deleteByNickName(nickName);
     }
