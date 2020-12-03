@@ -28,8 +28,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
     implementation 'io.jsonwebtoken:jjwt:0.9.1'
 
-    implementation 'com.amazonaws:aws-java-sdk-ses:1.11.807'
-
+    compile 'com.amazonaws:aws-java-sdk:1.11.133'
     compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.11.0'
     compile "org.apache.httpcomponents:httpcore:4.4.6"
     compile "org.apache.httpcomponents:httpclient:4.5.2"
