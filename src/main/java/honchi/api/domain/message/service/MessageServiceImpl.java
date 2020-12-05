@@ -72,7 +72,7 @@ public class MessageServiceImpl implements MessageService {
         List<MessageResponse> messages = new ArrayList<>();
 
         for (Message message : messageRepository.findAllByChatIdOrderByTimeDesc(chatId)) {
-            User user = userRepository.findById(message.getId())
+            User user = userRepository.findById(message.getUserId())
                     .orElseThrow(UserNotFoundException::new);
 
             messages.add(
