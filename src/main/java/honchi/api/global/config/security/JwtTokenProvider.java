@@ -1,5 +1,6 @@
 package honchi.api.global.config.security;
 
+import honchi.api.domain.auth.exception.ExpiredTokenException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.RequiredArgsConstructor;
@@ -65,8 +66,8 @@ public class JwtTokenProvider {
             Jwts.parser().setSigningKey(secretKey)
                     .parseClaimsJws(token).getBody().getSubject();
             return true;
-        } catch (Exception e) {
-            return false;
+        } catch (ExpiredTokenException e) {
+            throw e;
         }
     }
 
