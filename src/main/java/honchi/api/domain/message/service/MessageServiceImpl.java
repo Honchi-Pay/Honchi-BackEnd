@@ -53,7 +53,7 @@ public class MessageServiceImpl implements MessageService {
                         .userId(user.getId())
                         .message(imageName)
                         .messageType(MessageType.IMAGE)
-                        .readCount(chatRepository.countByChatId(imageRequest.getChatId()) - 1)
+                        .readCount(chatRepository.countByChatId(imageRequest.getChatId()))
                         .isDelete(false)
                         .time(LocalDateTime.now())
                         .build()
