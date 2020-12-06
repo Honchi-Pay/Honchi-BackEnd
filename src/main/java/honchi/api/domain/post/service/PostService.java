@@ -13,7 +13,6 @@ public interface PostService {
     List<PostListResponse> searchPost(PostSearchListRequest postSearchListRequest);
     PostContentResponse getContent(Integer postId);
     List<PostAttendListResponse> getAttendList(Integer postId);
-    List<MakeChatResponse> makeChat(Integer postId);
     void updatePoint(UpdatePointRequest updatePointRequest);
     void attendPost(Integer postId);
     void fixPost(Integer postId, PostFixRequest postFixRequest);

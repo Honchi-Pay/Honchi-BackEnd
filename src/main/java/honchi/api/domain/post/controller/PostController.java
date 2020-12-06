@@ -46,11 +46,6 @@ public class PostController {
         return postService.getAttendList(postId);
     }
 
-    @GetMapping("/{postId}/chat")
-    public List<MakeChatResponse> makeChat(@PathVariable Integer postId) {
-        return postService.makeChat(postId);
-    }
-
     @PutMapping("/point")
     public void updatePoint(@RequestBody @Valid UpdatePointRequest updatePointRequest) {
         postService.updatePoint(updatePointRequest);
