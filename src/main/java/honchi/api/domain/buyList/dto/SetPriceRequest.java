@@ -12,8 +12,5 @@ public class SetPriceRequest {
     private String chatId;
 
     @NotNull
-    private Integer postId;
-
-    @NotNull
     private Integer price;
 }

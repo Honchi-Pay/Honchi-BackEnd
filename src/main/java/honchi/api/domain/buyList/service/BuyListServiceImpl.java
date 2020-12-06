@@ -46,7 +46,9 @@ public class BuyListServiceImpl implements BuyListService {
         User user = userRepository.findByEmail(authenticationFacade.getUserEmail())
                 .orElseThrow(UserNotFoundException::new);
 
-        postRepository.findById(setPriceRequest.getPostId())
+        int postId = Integer.parseInt(setPriceRequest.getChatId());
+
+        postRepository.findById(postId)
                 .orElseThrow(PostNotFoundException::new);
 
         chatRepository.findByChatIdAndUserId(setPriceRequest.getChatId(), user.getId())
@@ -54,7 +56,7 @@ public class BuyListServiceImpl implements BuyListService {
 
         buyListRepository.save(
                 BuyList.builder()
-                        .postId(setPriceRequest.getPostId())
+                        .postId(postId)
                         .userId(user.getId())
                         .price(setPriceRequest.getPrice())
                         .build()
