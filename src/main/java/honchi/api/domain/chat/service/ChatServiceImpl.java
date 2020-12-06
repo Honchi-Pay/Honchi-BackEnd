@@ -52,7 +52,7 @@ public class ChatServiceImpl implements ChatService {
 
             List<String> images = new ArrayList<>();
 
-            for (PostAttend postAttend : postAttendRepository.findByPostId(chat.getPostId())) {
+            for (PostAttend postAttend : postAttendRepository.findByPostId(Integer.parseInt(chat.getChatId()))) {
                 UserImage userImage = userImageRepository.findByUserId(postAttend.getUserId());
 
                 if(userImage.getUserId().equals(user.getId())) continue;
